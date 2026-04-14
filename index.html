@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Fido Playhouse - Greenpoint</title>
+<link href="https://fonts.googleapis.com/css2?family=Righteous&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+<style>
+/* ── SOFT ORGANIC + PANTONE 2149 MID BLUE ── */
+:root{
+  --bp:#4C82A8;--bl:#AFCDD7;--bd:#2E5665;--bx:#4C82A8;--ow:#F6F7F0;--or:#D76B00;
+  --mu:rgba(175,205,215,.65);--br:rgba(255,255,255,.2);
+  --surface:rgba(255,255,255,.18);--surface2:rgba(255,255,255,.1);
+  --text:#F6F7F0;--text2:rgba(175,205,215,.85);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bx);font-family:'Lato',sans-serif;color:var(--text);height:100vh;overflow:hidden}
+
+/* ── NAV ── */
+#nav{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(46,86,101,.5);border-bottom:1px solid var(--br);z-index:200;backdrop-filter:blur(0px)}
+#sname{font-family:'Lato',sans-serif;font-size:14px;font-weight:700;letter-spacing:.3px;display:flex;align-items:center;gap:11px;color:var(--ow)}
+#sname .nav-avatar{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1.5px solid rgba(255,255,255,.3)}
+#sname .nav-avatar-letter{font-size:16px;font-weight:700;color:#F6F7F0}
+#sname .nav-text{}
+#sname .nav-title{font-size:13px;font-weight:700;color:#F6F7F0;letter-spacing:.3px}
+#sname .sub{font-size:9px;font-weight:400;color:rgba(175,205,215,.8);letter-spacing:1.5px;text-transform:uppercase;display:block;margin-top:1px}
+#tabs{display:flex;background:rgba(255,255,255,.15);border-radius:100px;padding:4px;gap:2px;border:1px solid rgba(255,255,255,.2)}
+.tab{padding:7px 16px;border-radius:100px;border:none;background:transparent;color:rgba(255,255,255,.65);font-family:'Lato',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:.2s;letter-spacing:.2px}
+.tab.on{background:#fff;color:#2E5665}
+#clk{font-size:12px;font-weight:400;color:rgba(175,205,215,.8);letter-spacing:.5px;min-width:44px;text-align:right}
+
+/* ── PAGES ── */
+.page{position:fixed;inset:64px 0 0 0;opacity:0;pointer-events:none;transition:opacity .4s;contain:layout style}
+.page.on{opacity:1;pointer-events:auto}
+
+/* ── DOGS ── */
+#pdogs{overflow:hidden;background:var(--bx)}
+#slideshow{width:100%;height:100%;position:relative;display:flex;align-items:center;justify-content:center}
+.slide{position:absolute;inset:0;opacity:0;transition:opacity 1s;pointer-events:none;will-change:opacity}
+.slide.on{opacity:1;pointer-events:auto}
+.sbg{position:absolute;inset:0;background-size:cover;background-position:center;will-change:transform;border-radius:0}
+.sbg::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(76,130,168,.05) 0%,transparent 30%,transparent 40%,rgba(46,86,101,.6) 68%,rgba(26,61,79,.97) 100%)}
+.sinfo{position:absolute;bottom:0;left:0;right:0;padding:0 40px 56px;z-index:2}
+.sname{font-family:'Righteous',sans-serif;font-size:62px;line-height:1;letter-spacing:-1px;margin-bottom:6px;color:#F6F7F0}
+.sbreed{font-size:14px;font-weight:700;color:rgba(175,205,215,.85);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.sbadges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.badge{font-size:11px;font-weight:700;padding:5px 14px;border-radius:100px;letter-spacing:.6px;text-transform:uppercase}
+.bt{background:rgba(255,255,255,.18);color:#F6F7F0;border:1px solid rgba(255,255,255,.25)}
+.bc{background:rgba(215,107,0,.2);color:#f0a060;border:1px solid rgba(215,107,0,.35)}
+.bb{background:rgba(255,255,255,.15);color:#F6F7F0;border:1px solid rgba(255,255,255,.25)}
+.sextras{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.etag{font-size:11px;font-weight:700;padding:4px 12px;border-radius:100px;background:rgba(215,107,0,.2);color:#f0a060;border:1px solid rgba(215,107,0,.3)}
+.addbtn{position:absolute;top:80px;right:20px;z-index:5;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);color:#F6F7F0;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;font-weight:700}
+.addbtn:hover{background:#fff;color:#2E5665}
+
+/* ── BIRTHDAY FRAME ── */
+.slide.bday::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:10;border:5px solid transparent;animation:bdayframe 2s ease-in-out infinite alternate}
+@keyframes bdayframe{
+  0%{border-color:#D76B00;box-shadow:inset 0 0 30px rgba(215,107,0,.25)}
+  50%{border-color:#fff;box-shadow:inset 0 0 30px rgba(255,255,255,.2)}
+  100%{border-color:#D76B00;box-shadow:inset 0 0 30px rgba(215,107,0,.25)}
+}
+.bday-badge{position:absolute;top:80px;left:20px;z-index:20;background:#D76B00;color:#F6F7F0;font-size:13px;font-weight:700;padding:6px 14px;border-radius:100px;letter-spacing:.5px;animation:bdaypop 1.5s ease-in-out infinite alternate}
+@keyframes bdaypop{0%{transform:scale(1)}100%{transform:scale(1.06)}}
+.slide-half.bday-half::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:10;border:5px solid transparent;animation:bdayframe 2s ease-in-out infinite alternate}
+#ctr{position:fixed;top:76px;right:18px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;color:#F6F7F0;z-index:150;letter-spacing:.3px;text-transform:uppercase}
+
+/* ── DOTS ── */
+#dots{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:150}
+.dot{height:6px;width:6px;border-radius:100px;background:rgba(255,255,255,.25);cursor:pointer;transition:.3s}
+.dot.on{background:var(--or);width:20px}
+
+/* ── ARROWS ── */
+.arr{position:fixed;top:50%;transform:translateY(-50%);z-index:150;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.25);color:#F6F7F0;font-size:20px;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.arr:hover{background:#fff;color:#2E5665;border-color:#fff}
+
+/* ── PROGRESS BAR ── */
+#pbar{position:fixed;bottom:0;left:0;height:3px;background:var(--or);transition:width linear;z-index:200;border-radius:0 2px 0 0}
+
+/* ── EMPTY / LOADING ── */
+#empty{display:none;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;text-align:center;background:var(--bx)}
+#empty h2{font-family:'Righteous',sans-serif;font-size:24px;color:var(--bd)}
+#empty p{color:var(--mu);font-size:14px}
+.spin{width:28px;height:28px;border:2px solid rgba(76,130,168,.15);border-top-color:var(--bp);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 12px}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ── TWO-DOG SLIDE ── */
+.slide-half{position:absolute;top:0;bottom:0;width:50%;overflow:hidden}
+.slide-half.left{left:0;border-right:1px solid rgba(255,255,255,.15)}
+.slide-half.right{right:0}
+.slide-half .sbg{position:absolute;inset:0;background-size:cover;background-position:center}
+.slide-half .sbg::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(246,247,240,.05) 0%,transparent 30%,transparent 40%,rgba(46,86,101,.55) 68%,rgba(46,86,101,.96) 100%)}
+.slide-half .sinfo{position:absolute;bottom:0;left:0;right:0;padding:0 20px 52px;z-index:2}
+.slide-half .sname{font-size:40px}
+.slide-half .addbtn{position:absolute;top:80px;right:10px;z-index:5;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);color:#F6F7F0;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s}
+.slide-half .addbtn:hover{background:#fff;color:#2E5665}
+
+/* ── GROOMING PAGE ── */
+#pgroom{overflow-y:auto;padding:24px 28px;background:var(--bx)}
+#gtop{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+#gtop h2{font-family:'Righteous',sans-serif;font-size:18px;color:#F6F7F0}
+#gstats{display:flex;gap:8px;flex-wrap:wrap}
+.sc{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:10px 18px;min-width:100px}
+.sl{font-size:9px;font-weight:700;color:rgba(175,205,215,.8);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.sv{font-family:'Righteous',sans-serif;font-size:22px;color:#F6F7F0}
+.sv.bl{color:#AFCDD7}.sv.or{color:#f0a060}
+.gtw{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:16px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead tr{border-bottom:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06)}
+th{text-align:left;font-size:9px;font-weight:700;color:rgba(175,205,215,.8);text-transform:uppercase;letter-spacing:1px;padding:11px 18px}
+td{padding:13px 18px;font-size:14px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:middle;color:#F6F7F0}
+tbody tr:hover{background:rgba(255,255,255,.06)}
+tbody tr.done td{opacity:.35;text-decoration:line-through}
+tbody tr.done td:first-child{opacity:1;text-decoration:none}
+tbody tr.future td{opacity:.55}
+tbody tr.future td:first-child,tbody tr.future td:last-child{opacity:1}
+
+/* ── MOBILE CARDS (grooming) ── */
+.mcards{display:none}
+.mcard{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:14px;margin-bottom:8px}
+.mcard.done{opacity:.38}
+.mcard.future{opacity:.75;border-left:2px solid rgba(215,107,0,.5)}
+.mch{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.mcn{font-family:'Righteous',sans-serif;font-size:16px;color:#F6F7F0}
+.mcb{font-size:11px;color:rgba(175,205,215,.7);margin-top:2px}
+.mcr{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-top:1px solid rgba(255,255,255,.1);font-size:13px;color:#F6F7F0}
+.mcrl{color:rgba(175,205,215,.7);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+
+/* ── CHECK BUTTON ── */
+.chk{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(255,255,255,.3);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:.2s}
+.chk.on{background:#fff;border-color:#fff;color:#2E5665}
+
+/* ── PILLS & VALUES ── */
+.tpill{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:2px 10px;font-size:11px;font-weight:700;color:#F6F7F0}
+.val{color:#f0a060;font-weight:700}
+
+/* ── SERVICES OVERLAY ── */
+#soverlay{display:none;position:fixed;inset:0;background:rgba(26,61,79,.7);z-index:300;align-items:center;justify-content:center}
+#soverlay.on{display:flex}
+#spanel{background:#2E5665;border:1px solid rgba(175,205,215,.25);border-radius:24px;padding:26px;width:90%;max-width:400px;max-height:85vh;overflow-y:auto}
+#stitle{font-family:'Righteous',sans-serif;font-size:18px;margin-bottom:4px;color:#F6F7F0}
+#ssub{font-size:13px;color:rgba(175,205,215,.7);margin-bottom:18px}
+.svc{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.07);border:1px solid rgba(175,205,215,.15);margin-bottom:8px;cursor:pointer;transition:.2s;user-select:none}
+.svc:hover{background:rgba(255,255,255,.15)}
+.svc.on{background:rgba(76,130,168,.35);border-color:#4C82A8}
+.svcl{display:flex;align-items:center;gap:10px}
+.svcc{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(175,205,215,.3);display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;transition:.2s;flex-shrink:0}
+.svc.on .svcc{background:#4C82A8;border-color:#4C82A8;color:#fff}
+.svcn{font-size:14px;font-weight:700;color:#F6F7F0}
+.svcp{font-family:'Righteous',sans-serif;font-size:14px;color:#f0a060}
+.dbadge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px;letter-spacing:.4px;text-transform:uppercase;margin-left:5px}
+.dl{background:rgba(215,107,0,.2);color:#f0a060;border:1px solid rgba(215,107,0,.3)}
+.ds{background:rgba(76,175,125,.2);color:#7FD4A8;border:1px solid rgba(76,175,125,.3)}
+#sacts{display:flex;gap:10px;margin-top:18px}
+.bcnl{flex:1;padding:11px;border-radius:100px;border:1px solid rgba(175,205,215,.25);background:transparent;color:rgba(175,205,215,.7);font-family:'Lato',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:.2s}
+.bcnl:hover{color:#F6F7F0;border-color:#AFCDD7}
+.bcon{flex:2;padding:11px;border-radius:100px;border:none;background:#4C82A8;color:#F6F7F0;font-family:'Righteous',sans-serif;font-size:14px;cursor:pointer;transition:.2s}
+.bcon:hover{background:#5a92b8}
+#dlabel{text-align:center;padding:10px;color:rgba(175,205,215,.7);font-size:13px;display:none}
+
+/* ── DROP OFF PAGE ── */
+#pdrop-inner{overflow-y:auto;height:100%;padding:24px 28px;background:var(--bx)}
+.grp{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:18px;margin-bottom:12px}
+.grph{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.grplbl{font-family:'Righteous',sans-serif;font-size:17px;color:#F6F7F0}
+.grpbdg{font-size:11px;font-weight:700;padding:4px 12px;border-radius:100px;letter-spacing:.5px;text-transform:uppercase}
+.grpA{background:rgba(255,255,255,.15);color:#F6F7F0;border:1px solid rgba(255,255,255,.2)}
+.grpB{background:rgba(215,107,0,.2);color:#f0a060;border:1px solid rgba(215,107,0,.3)}
+.grpC{background:rgba(76,175,125,.2);color:#7FD4A8;border:1px solid rgba(76,175,125,.3)}
+.grpD{background:rgba(175,100,175,.2);color:#d4a0d4;border:1px solid rgba(175,100,175,.3)}
+.grpE{background:rgba(200,180,50,.2);color:#d4c060;border:1px solid rgba(200,180,50,.3)}
+.stop{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.stop:last-child{border-bottom:none}
+.stopnum{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.2);color:#F6F7F0;font-family:'Righteous',sans-serif;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stopnum.home{background:var(--or)}
+.stopinfo{flex:1}
+.stopname{font-weight:700;font-size:14px;color:#F6F7F0}
+.stopaddr{font-size:12px;color:rgba(175,205,215,.7);margin-top:2px}
+.mapl{display:inline-flex;align-items:center;gap:5px;margin-top:10px;padding:7px 16px;border-radius:100px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#F6F7F0;font-size:12px;font-weight:700;text-decoration:none;letter-spacing:.3px;transition:.2s}
+.mapl:hover{background:#fff;color:#2E5665}
+.gcalc{text-align:center;padding:20px;color:rgba(175,205,215,.7);font-size:13px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  #nav{padding:0 14px;height:60px}
+  .page{inset-top:60px}
+  #pgroom{padding:16px}
+  #pdrop-inner{padding:16px}
+  #gtop{flex-direction:column}
+  #gstats{width:100%;justify-content:space-between}
+  .sc{flex:1;min-width:0;padding:8px 10px;text-align:center}
+  .gtw{display:none!important}
+  .mcards{display:block}
+  .sname{font-size:40px}
+  .sinfo{padding:0 18px 72px}
+  #sname .sub{display:none}
+  .tab{padding:6px 10px;font-size:11px}
+  .arr{width:34px;height:34px;font-size:18px}
+  #prev{left:6px}#next{right:6px}
+}
+</style>
+</head>
+<body>
+
+<script>
+const C={
+  API:"https://script.google.com/macros/s/AKfycbyzCoEicj4hUBPMpftpxoRVyxcvjH_ivM0TRAj6p6kck28wGY1DChEvhB6R_Mc8zqOSog/exec",
+  DUR:7, REF:10,
+  STORE:"975 Manhattan Ave Store #1, Brooklyn, NY 11222",
+  COL:{name:0,photo:1,breed:2,type:3,checkout:4,id:5,addr:6,apt:7,owner:8,gender:9,birthday:10,age:11,fixed:12}
+};
+const SVCS=[
+  {id:'ds',n:'Drop off (Short)',p:10,grp:'drop'},
+  {id:'dl',n:'Drop off (Long)', p:16,grp:'drop'},
+  {id:'ps',n:'Pick up (Short)', p:10,grp:'pick'},
+  {id:'pl',n:'Pick up (Long)',  p:16,grp:'pick'},
+  {id:'hf',n:'Holiday Fee',     p:40,grp:'other'},
+  {id:'fd',n:'House Food',      p:4, grp:'other'},
+  {id:'nt',n:'Nail Trimming',   p:15,grp:'other'},
+];
+</script>
+
+<div id="nav">
+  <div id="sname">
+    <div class="nav-avatar"><span class="nav-avatar-letter">F</span></div>
+    <div class="nav-text">
+      <span class="nav-title">FIDO PLAYHOUSE</span>
+      <span class="sub">Greenpoint</span>
+    </div>
+  </div>
+  <div id="tabs">
+    <button class="tab on" onclick="setTab('dogs')">🐶 Dogs Today</button>
+    <button class="tab" onclick="setTab('groom')">✂️ Grooming</button>
+    <button class="tab" onclick="setTab('drop')">🚗 Drop off</button>
+  </div>
+  <div id="clk"></div>
+</div>
+
+<div id="ctr"></div>
+
+<div id="pdogs" class="page on">
+  <div id="slideshow">
+    <div id="ldogs" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%">
+      <div class="spin"></div>
+      <p style="color:var(--bl);font-size:14px;letter-spacing:1px">Loading guests…</p>
+    </div>
+    <div id="empty">
+      <div style="font-size:52px">🐾</div>
+      <h2>No guests right now</h2>
+      <p>New check-ins appear automatically</p>
+    </div>
+  </div>
+</div>
+
+<div id="pgroom" class="page">
+  <div id="gtop">
+    <h2>✂️ GROOMING & BATH</h2>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div id="gstats">
+        <div class="sc"><div class="sl">Total</div><div class="sv" id="gtot">—</div></div>
+        <div class="sc"><div class="sl">Done</div><div class="sv bl" id="gdone">—</div></div>
+        <div class="sc"><div class="sl">Groomer 60%</div><div class="sv or" id="gcut">—</div></div>
+        <div class="sc"><div class="sl">Tips</div><div class="sv or" id="gtips">—</div></div>
+        <div class="sc"><div class="sl">Total Groomer</div><div class="sv or" id="gtotal">—</div></div>
+      </div>
+      <button onclick="openAddGroom()" style="width:40px;height:40px;border-radius:50%;border:none;background:rgba(255,255,255,.2);color:#F6F7F0;font-size:22px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s">+</button>
+    </div>
+  </div>
+  <div id="glod" style="text-align:center;padding:60px"><div class="spin"></div><p style="color:rgba(175,205,215,.7)">Loading…</p></div>
+  <div class="gtw" id="gtbl" style="display:none">
+    <table><thead><tr><th>Done</th><th>Name</th><th>Breed</th><th>Service</th><th>Details</th><th>Time</th><th>Value</th><th>Tip</th><th>Date</th><th></th></tr></thead>
+    <tbody id="gtbody"></tbody></table>
+  </div>
+  <div class="mcards" id="mcards"></div>
+  <div id="gempty" style="display:none;text-align:center;padding:60px;color:rgba(175,205,215,.7)">No dogs in grooming list</div>
+</div>
+
+<!-- ADD GROOMING MODAL -->
+<div id="goverlay" style="display:none;position:fixed;inset:0;background:rgba(26,61,79,.75);z-index:300;align-items:center;justify-content:center">
+  <div style="background:#2E5665;border:1px solid rgba(175,205,215,.2);border-radius:24px;padding:26px;width:90%;max-width:420px;max-height:90vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="font-family:'Righteous',sans-serif;font-size:18px;color:#F6F7F0" id="goverlay-title">Add Grooming</div>
+      <button onclick="closeAddGroom()" style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(175,205,215,.25);background:transparent;font-size:18px;cursor:pointer;color:#AFCDD7;display:flex;align-items:center;justify-content:center">×</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div>
+        <div style="font-size:10px;font-weight:700;color:#AFCDD7;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">Nome *</div>
+        <input id="g-nome" type="text" placeholder="Nome do cachorro" style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(175,205,215,.2);font-size:14px;color:#F6F7F0;font-family:'Lato',sans-serif;outline:none;background:rgba(255,255,255,.1)"/>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;color:#AFCDD7;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">Raça</div>
+        <input id="g-raca" type="text" placeholder="Raça" style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(175,205,215,.2);font-size:14px;color:#F6F7F0;font-family:'Lato',sans-serif;outline:none;background:rgba(255,255,255,.1)"/>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;color:#AFCDD7;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">Serviço *</div>
+        <div style="display:flex;gap:8px">
+          <div id="g-svc-grooming" onclick="selectSvc('Grooming')" style="flex:1;padding:10px;border-radius:12px;border:2px solid var(--br);text-align:center;font-size:13px;font-weight:700;color:var(--bl);cursor:pointer;transition:.2s">✂️ Grooming</div>
+          <div id="g-svc-bath" onclick="selectSvc('Bath')" style="flex:1;padding:10px;border-radius:12px;border:2px solid var(--br);text-align:center;font-size:13px;font-weight:700;color:var(--bl);cursor:pointer;transition:.2s">🛁 Bath</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;color:#AFCDD7;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">Detalhes</div>
+        <input id="g-detalhe" type="text" placeholder="Ex: corte específico, observações..." style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(175,205,215,.2);font-size:14px;color:#F6F7F0;font-family:'Lato',sans-serif;outline:none;background:rgba(255,255,255,.1)"/>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div style="font-size:10px;font-weight:700;color:#AFCDD7;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">Horário</div>
+          <input id="g-horario" type="time" style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(175,205,215,.2);font-size:14px;color:#F6F7F0;font-family:'Lato',sans-serif;outline:none;background:rgba(255,255,255,.1)"/>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;color:#AFCDD7;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">Data</div>
+          <input id="g-data" type="date" style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(175,205,215,.2);font-size:14px;color:#F6F7F0;font-family:'Lato',sans-serif;outline:none;background:rgba(255,255,255,.1)"/>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div style="font-size:10px;font-weight:700;color:#AFCDD7;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">Valor total</div>
+          <input id="g-valor" type="number" placeholder="0.00" step="0.01" oninput="calcGroomCut()" style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(175,205,215,.2);font-size:14px;color:#F6F7F0;font-family:'Lato',sans-serif;outline:none;background:rgba(255,255,255,.1)"/>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;color:#AFCDD7;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">Groomer 60%</div>
+          <input id="g-valorg" type="text" readonly placeholder="—" style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(175,205,215,.2);font-size:14px;font-weight:700;color:#AFCDD7;font-family:'Lato',sans-serif;outline:none;background:rgba(175,205,215,.1);cursor:default"/>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;color:#AFCDD7;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">Tip / Gorjeta</div>
+        <input id="g-tip" type="number" placeholder="0.00" step="0.01" style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(175,205,215,.2);font-size:14px;color:#F6F7F0;font-family:'Lato',sans-serif;outline:none;background:rgba(255,255,255,.1)"/>
+      </div>
+    </div>
+    <div id="g-err" style="display:none;color:#f0a060;font-size:12px;font-weight:700;margin-top:12px;text-align:center"></div>
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button onclick="closeAddGroom()" style="flex:1;padding:12px;border-radius:100px;border:1px solid rgba(175,205,215,.25);background:transparent;color:#AFCDD7;font-family:'Lato',sans-serif;font-size:14px;font-weight:700;cursor:pointer">Cancel</button>
+      <button onclick="submitAddGroom()" id="g-submit" style="flex:2;padding:12px;border-radius:100px;border:none;background:#4C82A8;color:#F6F7F0;font-family:'Righteous',sans-serif;font-size:14px;cursor:pointer;transition:.2s">Add</button>
+    </div>
+  </div>
+</div>
+
+<div id="pdrop" class="page">
+  <div id="pdrop-inner" style="overflow-y:auto;height:100%;padding:24px 28px;background:var(--bx)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <h2 style="font-family:'Righteous',sans-serif;font-size:18px;color:#F6F7F0">🚗 DROP OFF GROUPS</h2>
+      <div style="font-size:11px;color:rgba(175,205,215,.8);font-weight:700;letter-spacing:.5px">Starting & ending at 975 Manhattan Ave</div>
+    </div>
+    <div id="dgroups"></div>
+    <div id="dempty" style="display:none;text-align:center;padding:80px 20px;color:rgba(175,205,215,.7)">
+      <div style="font-size:48px;margin-bottom:16px">🚗</div>
+      <p style="font-size:15px">No drop offs added yet.<br>Use the + button on each dog's slide.</p>
+    </div>
+  </div>
+</div>
+<div id="dots"></div>
+<button class="arr" id="prev">&#8249;</button>
+<button class="arr" id="next">&#8250;</button>
+<div id="pbar"></div>
+
+<div id="soverlay">
+  <div id="spanel">
+    <div id="stitle">Add Services</div>
+    <div id="ssub"></div>
+    <div id="dlabel">⏳ Checking distance…</div>
+    <div id="slist"></div>
+    <div id="sacts">
+      <button class="bcnl" onclick="closeSvc()">Cancel</button>
+      <button class="bcon" onclick="confirmSvc()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Clock ──
+let _lastMin='';
+function tick(){
+  const now=new Date();
+  const t=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  if(t!==_lastMin){_lastMin=t;document.getElementById('clk').textContent=t}
+}
+tick(); setInterval(tick,10000);
+
+// ── Tabs ──
+const _tabEls={};['dogs','groom','drop'].forEach(x=>{_tabEls[x]=document.getElementById('p'+x)});
+const _tabBtns=Array.from(document.querySelectorAll('.tab'));
+const _navEls=['dots','prev','next','pbar','ctr'].map(id=>document.getElementById(id)).filter(Boolean);
+function setTab(t){
+  ['dogs','groom','drop'].forEach((x,i)=>{
+    _tabEls[x].classList.toggle('on',x===t);
+    _tabBtns[i].classList.toggle('on',x===t);
+  });
+  _navEls.forEach(el=>el.style.display=t==='dogs'?'':'none');
+  if(t==='groom') loadGroom();
+  if(t==='drop') renderDrop();
+}
+
+// ── DOGS ──
+let dogs=[],cur=0,timer=null,sig='';
+
+function parseVal(v){return parseFloat(String(v).replace(/[^\d.,]/g,'').replace(',','.'))||0}
+function fmtTime(v){if(!v)return'—';const d=new Date(v);return isNaN(d)?String(v):d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:true})}
+
+async function fetchDogs(){
+  try{const r=await fetch(C.API+'?t='+Date.now());return await r.json()}catch{return null}
+}
+
+function parsedog(row){
+  const genderRaw=String(row[C.COL.gender]||'');
+  const fixedRaw=row[C.COL.fixed];
+  const gender=genderRaw==='Male'?'Macho':genderRaw==='Female'?'Fêmea':'';
+  let fixed='';
+  if(gender==='Macho') fixed=fixedRaw==1||fixedRaw==='1'?'Castrado':'Não castrado';
+  if(gender==='Fêmea') fixed=fixedRaw==1||fixedRaw==='1'?'Castrada':'Não castrada';
+
+  // birthday pode vir como Date object do Sheets ou string
+  const bdRaw=row[C.COL.birthday];
+  let birthday='';
+  if(bdRaw instanceof Date){
+    birthday=bdRaw.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  } else if(bdRaw){
+    birthday=String(bdRaw);
+  }
+
+  return{
+    name:String(row[C.COL.name]||'Unknown'),
+    photo:String(row[C.COL.photo]||''),
+    breed:String(row[C.COL.breed]||''),
+    type:String(row[C.COL.type]||''),
+    checkout:row[C.COL.checkout]||'',
+    id:row[C.COL.id]||'',
+    addr:String(row[C.COL.addr]||''),
+    apt:String(row[C.COL.apt]||''),
+    owner:String(row[C.COL.owner]||''),
+    gender,fixed,birthday,
+    age:String(row[C.COL.age]||''),
+    extras:[]
+  };
+}
+
+function isBirthday(dog){
+  if(!dog.birthday) return false;
+  const today=new Date();
+  const bd=new Date(dog.birthday);
+  if(isNaN(bd)) return false;
+  return bd.getMonth()===today.getMonth()&&bd.getDate()===today.getDate();
+}
+
+function dogHalf(dog,idx,side){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const co=dog.checkout?new Date(dog.checkout):null;
+  if(co) co.setHours(0,0,0,0);
+  const boarding=!co||co>today;
+  const colabel=co?'Checkout '+co.toLocaleDateString([],{month:'short',day:'numeric'}):'Still Boarding';
+  const bg=dog.photo?`background-image:url('${dog.photo}')`:`background:linear-gradient(135deg,var(--bd),var(--bx))`;
+  const bday=isBirthday(dog);
+  return`<div class="slide-half ${side}${bday?' bday-half':''}">
+    <div class="sbg" style="${bg}"></div>
+    ${bday?`<div class="bday-badge">🎂 Happy Birthday, ${dog.name.split(' ')[0]}!</div>`:''}
+    <button class="addbtn" onclick="openSvc(${idx})">+</button>
+    <div class="sinfo">
+      <div class="sname">${dog.name}</div>
+      <div class="sbreed">${dog.breed}</div>
+      <div class="sbadges">
+        ${dog.type?`<span class="badge bt">${dog.type}</span>`:''}
+        <span class="badge ${boarding?'bb':'bc'}">${colabel}</span>
+        ${dog.gender?`<span class="badge bt">${dog.gender}</span>`:''}
+        ${dog.fixed?`<span class="badge bb">${dog.fixed}</span>`:''}
+        ${dog.age?`<span class="badge bt">${dog.age}</span>`:''}
+      </div>
+      <div class="sextras" id="ex${idx}">${(dog.extras||[]).map(x=>`<span class="etag">${x.n}${x.p>0?' $'+x.p:''}</span>`).join('')}</div>
+    </div>
+  </div>`;
+}
+
+function buildSlides(list){
+  const ss=document.getElementById('slideshow');
+  const dt=document.getElementById('dots');
+  document.getElementById('ldogs').style.display='none';
+  document.querySelectorAll('.slide').forEach(s=>s.remove());
+  dt.innerHTML='';
+
+  if(!list.length){
+    document.getElementById('empty').style.display='flex';
+    document.getElementById('prev').style.display='none';
+    document.getElementById('next').style.display='none';
+    document.getElementById('ctr').textContent='';
+    return;
+  }
+  document.getElementById('empty').style.display='none';
+  document.getElementById('prev').style.display='';
+  document.getElementById('next').style.display='';
+  document.getElementById('ctr').textContent=list.length+(list.length===1?' GUEST TODAY':' GUESTS TODAY');
+
+  const pairs=[];
+  for(let i=0;i<list.length;i+=2){
+    const pair=list.slice(i,i+2);
+    if(pair.length===1) pair.push(list[0]);
+    pairs.push(pair);
+  }
+
+  const slidesFrag=document.createDocumentFragment();
+  const dotsFrag=document.createDocumentFragment();
+  const today=new Date(); today.setHours(0,0,0,0);
+  const todayMs=today.getTime();
+
+  pairs.forEach((pair,pi)=>{
+    const sl=document.createElement('div');
+    sl.className='slide'+(pi===0?' on':'');
+    if(pair.length===2){
+      const i0=list.indexOf(pair[0]), i1=list.indexOf(pair[1]);
+      sl.innerHTML=dogHalf(pair[0],i0,'left')+dogHalf(pair[1],i1,'right');
+    } else {
+      const dog=pair[0], i0=list.indexOf(dog);
+      const co=dog.checkout?new Date(dog.checkout):null;
+      if(co) co.setHours(0,0,0,0);
+      const boarding=!co||co.getTime()>todayMs;
+      const colabel=co?'Checkout '+co.toLocaleDateString([],{month:'short',day:'numeric'}):'Still Boarding';
+      const bg=dog.photo?`background-image:url('${dog.photo}')`:`background:linear-gradient(135deg,var(--bd),var(--bx))`;
+      const bday=isBirthday(dog);
+      if(bday) sl.classList.add('bday');
+      sl.innerHTML=`
+        <div class="sbg" style="${bg}"></div>
+        ${bday?`<div class="bday-badge">🎂 Happy Birthday, ${dog.name.split(' ')[0]}!</div>`:''}
+        <button class="addbtn" onclick="openSvc(${i0})">+</button>
+        <div class="sinfo">
+          <div class="sname">${dog.name}</div>
+          <div class="sbreed">${dog.breed}</div>
+          <div class="sbadges">
+            ${dog.type?`<span class="badge bt">${dog.type}</span>`:''}
+            <span class="badge ${boarding?'bb':'bc'}">${colabel}</span>
+            ${dog.gender?`<span class="badge bt">${dog.gender}</span>`:''}
+            ${dog.fixed?`<span class="badge bb">${dog.fixed}</span>`:''}
+            ${dog.age?`<span class="badge bt">${dog.age}</span>`:''}
+          </div>
+          <div class="sextras" id="ex${i0}">${(dog.extras||[]).map(x=>`<span class="etag">${x.n}${x.p>0?' $'+x.p:''}</span>`).join('')}</div>
+        </div>`;
+    }
+    slidesFrag.appendChild(sl);
+
+    const dot=document.createElement('div');
+    dot.className='dot'+(pi===0?' on':'');
+    dot.onclick=()=>goTo(pi);
+    dotsFrag.appendChild(dot);
+  });
+
+  ss.appendChild(slidesFrag);
+  dt.appendChild(dotsFrag);
+  window._pairCount=pairs.length;
+}
+
+function goTo(i){
+  if(!dogs.length) return;
+  const total=window._pairCount||Math.ceil(dogs.length/2);
+  const slides=document.querySelectorAll('.slide');
+  const dotEls=document.querySelectorAll('.dot');
+  slides[cur]?.classList.remove('on');
+  dotEls[cur]?.classList.remove('on');
+  cur=((i%total)+total)%total;
+  slides[cur]?.classList.add('on');
+  dotEls[cur]?.classList.add('on');
+  resetTimer();
+}
+
+function resetTimer(){
+  clearInterval(timer);
+  const b=document.getElementById('pbar');
+  b.style.transition='none'; b.style.width='0%';
+  requestAnimationFrame(()=>{b.style.transition=`width ${C.DUR}s linear`;b.style.width='100%'});
+  timer=setInterval(()=>goTo(cur+1),C.DUR*1000);
+}
+
+document.getElementById('prev').onclick=()=>goTo(cur-1);
+document.getElementById('next').onclick=()=>goTo(cur+1);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')goTo(cur-1);if(e.key==='ArrowRight')goTo(cur+1)});
+
+function preload(list){
+  const run=()=>list.forEach(d=>{if(d.photo){const i=new Image();i.src=d.photo}});
+  'requestIdleCallback' in window?requestIdleCallback(run):setTimeout(run,200);
+}
+
+async function loadDogs(){
+  const raw=await fetchDogs();
+  if(!raw) return;
+  const rows=Array.isArray(raw[0])?raw:[raw];
+  const today=new Date(); today.setHours(0,0,0,0);
+  const todayMs=today.getTime();
+  const filtered=rows.filter(r=>{
+    if(!r[C.COL.name]||!String(r[C.COL.name]).trim()) return false;
+    const co=r[C.COL.checkout];
+    if(!co) return true;
+    const d=new Date(co); d.setHours(0,0,0,0);
+    return d.getTime()>=todayMs;
+  }).map(parsedog);
+
+  const newSig='v:'+filtered.map(d=>d.name+d.id).join('|');
+  const dogListChanged=newSig!==sig;
+  if(dogListChanged){
+    sig=newSig;
+    const prevName=dogs[cur]?.name||'';
+    dogs=filtered;
+    pruneExtras(dogs);
+    dogs.forEach(loadExtras);
+    await syncExtrasFromAPI(dogs);
+    preload(dogs);
+    buildSlides(dogs);
+    if(dogs.length){
+      const ri=dogs.findIndex(d=>d.name===prevName);
+      cur=ri>=0?Math.floor(ri/2):0;
+      const total=window._pairCount||Math.ceil(dogs.length/2);
+      cur=Math.min(cur,total-1);
+      document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('on',i===cur));
+      document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur));
+      resetTimer();
+    }
+  } else {
+    // Dog list unchanged — just sync extras to catch changes from other devices
+    const prevExtras=dogs.map(d=>JSON.stringify(d.extras));
+    await syncExtrasFromAPI(dogs);
+    const changed=dogs.some((d,i)=>JSON.stringify(d.extras)!==prevExtras[i]);
+    if(changed) buildSlides(dogs);
+  }
+}
+
+loadDogs();
+setInterval(loadDogs,C.REF*1000);
+
+// ── SERVICES ──
+let svcDog=-1,selSvcs=[],isLong=null,wasPaused=false;
+
+const _distCache=new Map();
+async function distCheck(addr,apt){
+  if(!addr) return false;
+  const key=addr+'|'+(apt||'');
+  if(_distCache.has(key)) return _distCache.get(key);
+  const timeout=ms=>new Promise((_,r)=>setTimeout(()=>r('timeout'),ms));
+  try{
+    const queries=[
+      addr+(apt?', '+apt:'')+', Brooklyn, NY 11249',
+      addr+', Brooklyn, NY',
+      addr+', New York, NY'
+    ];
+    for(const q of queries){
+      try{
+        const r=await Promise.race([
+          fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`),
+          timeout(5000)
+        ]);
+        const d=await r.json();
+        if(!d.length) continue;
+        const dlat=parseFloat(d[0].lat),dlon=parseFloat(d[0].lon);
+        const slat=40.7302,slon=-73.9515;
+        const R=6371000,dLa=(dlat-slat)*Math.PI/180,dLo=(dlon-slon)*Math.PI/180;
+        const a=Math.sin(dLa/2)**2+Math.cos(slat*Math.PI/180)*Math.cos(dlat*Math.PI/180)*Math.sin(dLo/2)**2;
+        const result=R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))>800;
+        _distCache.set(key,result);
+        return result;
+      }catch{}
+    }
+  }catch{}
+  _distCache.set(key,false);
+  return false;
+}
+
+async function openSvc(i){
+  svcDog=i; selSvcs=[...(dogs[i].extras||[])];
+  clearInterval(timer);
+  document.getElementById('pbar').style.transition='none';
+  wasPaused=true;
+  document.getElementById('stitle').textContent='Add Services — '+dogs[i].name;
+  document.getElementById('ssub').textContent=dogs[i].owner?'Owner: '+dogs[i].owner:'';
+  document.getElementById('soverlay').classList.add('on');
+  isLong=false;
+  if(dogs[i].addr){
+    document.getElementById('dlabel').style.display='block';
+    isLong=await distCheck(dogs[i].addr,dogs[i].apt);
+    document.getElementById('dlabel').style.display='none';
+  }
+  renderSvcs();
+}
+
+function renderSvcs(){
+  const el=document.getElementById('slist');
+  el.innerHTML='';
+  SVCS.forEach(s=>{
+    // Show only the correct tier — system decides based on distance
+    if(s.grp==='drop'||s.grp==='pick'){
+      if(isLong&&s.id.endsWith('s')) return;
+      if(!isLong&&s.id.endsWith('l')) return;
+    }
+    const on=selSvcs.some(x=>x.id===s.id);
+    const div=document.createElement('div');
+    div.className='svc'+(on?' on':'');
+    div.innerHTML=`<div class="svcl"><div class="svcc">✓</div><span class="svcn">${s.n}</span></div><span class="svcp">${s.p>0?'$'+s.p:'Custom'}</span>`;
+    div.onclick=()=>{
+      const idx=selSvcs.findIndex(x=>x.id===s.id);
+      idx>=0?selSvcs.splice(idx,1):selSvcs.push(s);
+      renderSvcs();
+    };
+    el.appendChild(div);
+  });
+}
+
+function confirmSvc(){
+  if(svcDog>=0){
+    dogs[svcDog].extras=[...selSvcs];
+    saveExtras(dogs[svcDog]);
+    const el=document.getElementById('ex'+svcDog);
+    if(el) el.innerHTML=selSvcs.map(s=>`<span class="etag">${s.n}${s.p>0?' $'+s.p:''}</span>`).join('');
+  }
+  closeSvc();
+  // Recalculate drop off groups if drop tab is active
+  if(document.getElementById('pdrop').classList.contains('on')) renderDrop();
+}
+
+function extrasKey(dog){return'extras_'+String(dog.id||dog.name).replace(/\s+/g,'_')}
+function saveExtras(dog){
+  const val=JSON.stringify(dog.extras);
+  localStorage.setItem(extrasKey(dog),val);
+  // Sync to API so other devices pick it up
+  const key=encodeURIComponent(extrasKey(dog));
+  fetch(`${C.API}?action=setExtras&key=${key}&val=${encodeURIComponent(val)}&t=${Date.now()}`).catch(()=>{});
+}
+function loadExtras(dog){try{const s=localStorage.getItem(extrasKey(dog));if(s)dog.extras=JSON.parse(s);}catch{}}
+function pruneExtras(activeDogs){
+  try{
+    const activeKeys=new Set(activeDogs.map(extrasKey));
+    Object.keys(localStorage).forEach(k=>{if(k.startsWith('extras_')&&!activeKeys.has(k))localStorage.removeItem(k)});
+  }catch{}
+}
+// Pull extras from API on each loadDogs cycle so all devices stay in sync
+async function syncExtrasFromAPI(activeDogs){
+  try{
+    const r=await fetch(`${C.API}?action=getExtras&t=${Date.now()}`);
+    const data=await r.json();
+    if(!data||typeof data!=='object') return;
+    activeDogs.forEach(dog=>{
+      const key=extrasKey(dog);
+      if(data[key]){
+        try{
+          dog.extras=JSON.parse(data[key]);
+          localStorage.setItem(key,data[key]);
+        }catch{}
+      }
+    });
+  }catch{}
+}
+
+const STORE_LL=[40.7302,-73.9515];
+const GRP_LABELS=['A','B','C','D','E','F','G','H'];
+
+function haversine([la1,lo1],[la2,lo2]){
+  const R=6371000,dL=(la2-la1)*Math.PI/180,dO=(lo2-lo1)*Math.PI/180;
+  const a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dO/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+// Nearest-neighbor TSP starting from store
+function optimizeRoute(stops){
+  if(!stops.length) return [];
+  let unvisited=[...stops],route=[],cur=STORE_LL;
+  while(unvisited.length){
+    let best=0,bd=Infinity;
+    unvisited.forEach((s,i)=>{const d=haversine(cur,s.ll);if(d<bd){bd=d;best=i}});
+    route.push(unvisited[best]);
+    cur=unvisited[best].ll;
+    unvisited.splice(best,1);
+  }
+  return route;
+}
+
+// Group dogs by direction from store — dogs in same direction travel together
+// without backtracking or passing the store again
+function clusterDogs(dogsWithLL){
+  if(!dogsWithLL.length) return [];
+
+  // Calculate angle (bearing) from store to each dog
+  const [slat,slon]=STORE_LL;
+  dogsWithLL.forEach(d=>{
+    const dlat=d.ll[0],dlon=d.ll[1];
+    const dy=dlat-slat, dx=(dlon-slon)*Math.cos(slat*Math.PI/180);
+    d._angle=Math.atan2(dx,dy)*180/Math.PI; // bearing in degrees
+    d._dist=haversine(STORE_LL,d.ll);
+  });
+
+  // Sort by angle so nearby-direction dogs are adjacent
+  const sorted=[...dogsWithLL].sort((a,b)=>a._angle-b._angle);
+
+  // Greedily group dogs within 45° of each other, max 5 per group
+  const groups=[], used=new Set();
+  sorted.forEach((d,i)=>{
+    if(used.has(i)) return;
+    const grp=[d]; used.add(i);
+    sorted.forEach((d2,j)=>{
+      if(used.has(j)||grp.length>=5) return;
+      const angleDiff=Math.abs(d._angle-d2._angle);
+      const diff=Math.min(angleDiff,360-angleDiff); // handle wrap-around
+      if(diff<=45) { grp.push(d2); used.add(j); }
+    });
+    groups.push(grp);
+  });
+  return groups;
+}
+
+const _geocodeCache=new Map();
+async function geocode(addr,apt){
+  const key=addr+'|'+(apt||'');
+  if(_geocodeCache.has(key)) return _geocodeCache.get(key);
+  try{
+    const q=encodeURIComponent(addr+(apt?', '+apt:'')+', Brooklyn, NY');
+    const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`);
+    const d=await r.json();
+    const result=d.length?[parseFloat(d[0].lat),parseFloat(d[0].lon)]:null;
+    _geocodeCache.set(key,result);
+    return result;
+  }catch{_geocodeCache.set(key,null);return null}
+}
+
+async function renderDrop(){
+  const el=document.getElementById('dgroups');
+  const em=document.getElementById('dempty');
+  // Get all dogs with drop off service
+  const dropDogs=dogs.filter(d=>d.extras?.some(s=>s.grp==='drop'));
+  if(!dropDogs.length){el.innerHTML='';em.style.display='block';return}
+  em.style.display='none';
+  el.innerHTML=`<div class="gcalc"><div class="spin"></div><p>Calculating optimal routes…</p></div>`;
+
+  // Geocode all addresses
+  const withLL=await Promise.all(dropDogs.map(async d=>{
+    const ll=d.addr?await geocode(d.addr,d.apt):null;
+    return{...d,ll:ll||STORE_LL};
+  }));
+
+  const groups=clusterDogs(withLL);
+  el.innerHTML='';
+
+  groups.forEach((grp,gi)=>{
+    const label=GRP_LABELS[gi]||String(gi+1);
+    const route=optimizeRoute(grp);
+    // Build Google Maps URL with waypoints
+    const storeAddr=encodeURIComponent(C.STORE);
+    const wpAddrs=route.map(s=>encodeURIComponent(s.addr+(s.apt?', '+s.apt:'')+', Brooklyn, NY 11249')).join('|');
+    const mapsUrl=`https://www.google.com/maps/dir/?api=1&origin=${storeAddr}&destination=${storeAddr}&waypoints=${wpAddrs}&travelmode=walking`;
+
+    const div=document.createElement('div');
+    div.className='grp';
+    div.innerHTML=`
+      <div class="grph">
+        <span class="grplbl">Group ${label}</span>
+        <span class="grpbdg grp${label}">${grp.length} dog${grp.length>1?'s':''}</span>
+      </div>
+      <div class="stop">
+        <div class="stopnum home">🏠</div>
+        <div class="stopinfo"><div class="stopname">Start — 975 Manhattan Ave</div></div>
+      </div>
+      ${route.map((s,i)=>`
+        <div class="stop">
+          <div class="stopnum">${i+1}</div>
+          <div class="stopinfo">
+            <div class="stopname">${s.name} <span style="font-weight:300;color:var(--mu);font-size:12px">(${s.breed})</span></div>
+            <div class="stopaddr">${s.addr||'No address'}${s.apt?', '+s.apt:''}</div>
+            ${s.owner?`<div style="font-size:12px;color:var(--bl);margin-top:2px">👤 ${s.owner}</div>`:''}
+          </div>
+          <div style="font-size:11px;font-weight:700;color:var(--or)">${s.extras?.find(e=>e.grp==='drop')?.n?.replace(' (Short)','').replace(' (Long)','')||'Drop off'}</div>
+        </div>`).join('')}
+      <div class="stop">
+        <div class="stopnum home">🏠</div>
+        <div class="stopinfo"><div class="stopname">Return — 975 Manhattan Ave</div></div>
+      </div>
+      <a class="mapl" href="${mapsUrl}" target="_blank">📍 Open in Google Maps</a>`;
+    el.appendChild(div);
+  });
+}
+
+function closeSvc(){
+  document.getElementById('soverlay').classList.remove('on');
+  svcDog=-1;
+  if(wasPaused){resetTimer();wasPaused=false}
+}
+
+document.getElementById('soverlay').onclick=e=>{if(e.target===document.getElementById('soverlay'))closeSvc()};
+
+// ── GROOMING ──
+let gdata=[];
+
+async function loadGroom(){
+  document.getElementById('glod').style.display='block';
+  document.getElementById('gtbl').style.display='none';
+  document.getElementById('gempty').style.display='none';
+  document.getElementById('mcards').innerHTML='';
+  try{const r=await fetch(C.API+'?action=grooming&t='+Date.now());gdata=await r.json()}catch{gdata=[]}
+  document.getElementById('glod').style.display='none';
+  renderGroom();
+}
+
+function renderGroom(){
+  const tb=document.getElementById('gtbody');
+  const mc=document.getElementById('mcards');
+  tb.innerHTML=''; mc.innerHTML='';
+  if(!gdata.length){
+    document.getElementById('gempty').style.display='block';
+    document.getElementById('gempty').textContent='No grooming for today 🐾';
+    updStats([]);return;
+  }
+  const today=new Date(); today.setHours(0,0,0,0);
+  const todayMs=today.getTime();
+  const todayDogs=gdata.filter(d=>{
+    if(!d.date) return true;
+    const dd=new Date(d.date); dd.setHours(0,0,0,0);
+    return dd.getTime()===todayMs;
+  });
+  const futureDogs=gdata.filter(d=>{
+    if(!d.date) return false;
+    const dd=new Date(d.date); dd.setHours(0,0,0,0);
+    return dd.getTime()>todayMs;
+  }).sort((a,b)=>{
+    const da=new Date(a.date),db=new Date(b.date);
+    if(da-db!==0) return da-db;
+    return String(a.time).localeCompare(String(b.time));
+  });
+  const sorted=[...todayDogs,...futureDogs];
+  if(!sorted.length){
+    document.getElementById('gempty').style.display='block';
+    document.getElementById('gempty').textContent='No grooming for today 🐾';
+    updStats([]);return;
+  }
+  if(!todayDogs.length){
+    document.getElementById('gempty').style.display='block';
+    document.getElementById('gempty').textContent='No grooming for today 🐾';
+  }
+  document.getElementById('gtbl').style.display='block';
+  const tbFrag=document.createDocumentFragment();
+  const mcFrag=document.createDocumentFragment();
+  sorted.forEach(dog=>{
+    const v=parseVal(dog.value),t=fmtTime(dog.time);
+    const tip=parseVal(dog.tip);
+    const dd=dog.date?new Date(dog.date):null;
+    if(dd) dd.setHours(0,0,0,0);
+    const ddMs=dd?dd.getTime():null;
+    const isToday=!dd||ddMs===todayMs;
+    const isFuture=dd&&ddMs>todayMs;
+    const dateLabel=dd?dd.toLocaleDateString('pt-BR',{weekday:'short',month:'short',day:'numeric'}):'';
+    const tr=document.createElement('tr');
+    tr.className=dog.done?'done':isFuture?'future':'';
+    tr.innerHTML=`<td><button class="chk${dog.done?' on':''}${!isToday?' disabled':''}" ${isToday?`onclick="togDone(${dog.index},${!dog.done})"`:''}>✓</button></td><td style="font-weight:700">${dog.name}</td><td style="color:var(--mu)">${dog.breed||'—'}</td><td>${dog.service||'—'}</td><td style="color:var(--mu);font-size:13px">${dog.details||'—'}</td><td><span class="tpill">${t}</span></td><td class="val">$${v.toFixed(2)}</td><td>${tip>0?`<span class="val">$${tip.toFixed(2)}</span>`:'—'}</td><td>${isFuture?`<span class="tpill" style="background:rgba(215,107,0,.15);border-color:rgba(215,107,0,.3);color:#f0a060">${dateLabel}</span>`:'<span class="tpill">Today</span>'}</td><td><button onclick="openEditGroom(${dog.index})" style="padding:4px 10px;border-radius:100px;border:1px solid var(--br);background:transparent;font-size:11px;font-weight:700;color:var(--bp);cursor:pointer">Edit</button></td>`;
+    tbFrag.appendChild(tr);
+    const card=document.createElement('div');
+    card.className='mcard'+(dog.done?' done':isFuture?' future':'');
+    card.innerHTML=`<div class="mch"><div><div class="mcn">${dog.name}</div><div class="mcb">${dog.breed||'—'}${isFuture?` · <span style="color:#f0a060">${dateLabel}</span>`:''}</div></div><div style="display:flex;align-items:center;gap:6px"><button onclick="openEditGroom(${dog.index})" style="padding:4px 10px;border-radius:100px;border:1px solid var(--br);background:transparent;font-size:11px;font-weight:700;color:var(--bp);cursor:pointer">Edit</button><button class="chk${dog.done?' on':''}${!isToday?' disabled':''}" ${isToday?`onclick="togDone(${dog.index},${!dog.done})"`:''}>✓</button></div></div><div class="mcr"><span class="mcrl">Service</span><span>${dog.service||'—'}</span></div>${dog.details?`<div class="mcr"><span class="mcrl">Details</span><span style="color:var(--mu)">${dog.details}</span></div>`:''}<div class="mcr"><span class="mcrl">Time</span><span class="tpill">${t}</span></div><div class="mcr"><span class="mcrl">Value</span><span class="val">$${v.toFixed(2)}</span></div>${tip>0?`<div class="mcr"><span class="mcrl">Tip</span><span class="val">$${tip.toFixed(2)}</span></div>`:''}`;
+    mcFrag.appendChild(card);
+  });
+  tb.appendChild(tbFrag);
+  mc.appendChild(mcFrag);
+  updStats(sorted);
+}
+
+function updStats(d){
+  const tot=d.length,done=d.filter(x=>x.done).length;
+  const total=d.reduce((s,x)=>s+parseVal(x.value),0);
+  const tips=d.reduce((s,x)=>s+parseVal(x.tip),0);
+  const cut=total*.6;
+  document.getElementById('gtot').textContent=tot;
+  document.getElementById('gdone').textContent=done+'/'+tot;
+  document.getElementById('gcut').textContent='$'+cut.toFixed(2);
+  document.getElementById('gtips').textContent='$'+tips.toFixed(2);
+  document.getElementById('gtotal').textContent='$'+(cut+tips).toFixed(2);
+}
+
+async function togDone(row,state){
+  const i=gdata.findIndex(d=>d.index===row);
+  if(i<0) return;
+  gdata[i].done=state;
+  renderGroom();
+  try{await fetch(`${C.API}?action=updateGrooming&row=${row}&done=${state}&t=${Date.now()}`)}catch{}
+}
+
+// ── ADD / EDIT GROOMING MODAL ──
+let _selectedSvc='';
+let _editIndex=-1; // -1 = add mode, >0 = edit mode
+
+function _resetModal(){
+  _selectedSvc='';
+  document.getElementById('g-nome').value='';
+  document.getElementById('g-raca').value='';
+  document.getElementById('g-detalhe').value='';
+  document.getElementById('g-horario').value='';
+  document.getElementById('g-valor').value='';
+  document.getElementById('g-valorg').value='';
+  document.getElementById('g-tip').value='';
+  document.getElementById('g-err').style.display='none';
+  ['g-svc-grooming','g-svc-bath'].forEach(id=>{
+    document.getElementById(id).style.background='';
+    document.getElementById(id).style.borderColor='var(--br)';
+    document.getElementById(id).style.color='var(--bl)';
+  });
+}
+
+function openAddGroom(){
+  _editIndex=-1;
+  _resetModal();
+  const today=new Date();
+  const yyyy=today.getFullYear();
+  const mm=String(today.getMonth()+1).padStart(2,'0');
+  const dd=String(today.getDate()).padStart(2,'0');
+  document.getElementById('g-data').value=`${yyyy}-${mm}-${dd}`;
+  document.getElementById('goverlay-title').textContent='Add Grooming';
+  document.getElementById('g-submit').textContent='Add';
+  document.getElementById('goverlay').style.display='flex';
+}
+
+function openEditGroom(rowIndex){
+  const dog=gdata.find(d=>d.index===rowIndex);
+  if(!dog) return;
+  _editIndex=rowIndex;
+  _resetModal();
+  document.getElementById('g-nome').value=dog.name||'';
+  document.getElementById('g-raca').value=dog.breed||'';
+  document.getElementById('g-detalhe').value=dog.details||'';
+  document.getElementById('g-tip').value=dog.tip>0?dog.tip:'';
+  // time: comes as Date string or HH:MM
+  if(dog.time){
+    const d=new Date(dog.time);
+    if(!isNaN(d)){
+      const hh=String(d.getHours()).padStart(2,'0');
+      const mi=String(d.getMinutes()).padStart(2,'0');
+      document.getElementById('g-horario').value=`${hh}:${mi}`;
+    } else {
+      document.getElementById('g-horario').value=String(dog.time).substring(0,5);
+    }
+  }
+  // valor
+  const v=parseVal(dog.value);
+  document.getElementById('g-valor').value=v>0?v:'';
+  document.getElementById('g-valorg').value=v>0?(v*.6).toFixed(2):'';
+  // date
+  if(dog.date){
+    const d=new Date(dog.date);
+    const yyyy=d.getFullYear();
+    const mm=String(d.getMonth()+1).padStart(2,'0');
+    const dd2=String(d.getDate()).padStart(2,'0');
+    document.getElementById('g-data').value=`${yyyy}-${mm}-${dd2}`;
+  }
+  // service
+  if(dog.service) selectSvc(dog.service);
+  document.getElementById('goverlay-title').textContent='Edit Grooming';
+  document.getElementById('g-submit').textContent='Save';
+  document.getElementById('goverlay').style.display='flex';
+}
+
+function closeAddGroom(){
+  document.getElementById('goverlay').style.display='none';
+}
+
+function selectSvc(svc){
+  _selectedSvc=svc;
+  const map={'Grooming':'g-svc-grooming','Bath':'g-svc-bath'};
+  ['g-svc-grooming','g-svc-bath'].forEach(id=>{
+    document.getElementById(id).style.background='';
+    document.getElementById(id).style.borderColor='var(--br)';
+    document.getElementById(id).style.color='var(--bl)';
+  });
+  const sel=document.getElementById(map[svc]);
+  if(sel){sel.style.background='var(--bp)';sel.style.borderColor='var(--bp)';sel.style.color='#F6F7F0';}
+}
+
+function calcGroomCut(){
+  const val=parseFloat(document.getElementById('g-valor').value)||0;
+  const cut=(val*0.6).toFixed(2);
+  document.getElementById('g-valorg').value=val>0?cut:'';
+}
+
+async function submitAddGroom(){
+  const nome=document.getElementById('g-nome').value.trim();
+  const err=document.getElementById('g-err');
+  if(!nome){err.textContent='Nome é obrigatório.';err.style.display='block';return;}
+  if(!_selectedSvc){err.textContent='Selecione um serviço.';err.style.display='block';return;}
+  err.style.display='none';
+
+  const btn=document.getElementById('g-submit');
+  const origText=btn.textContent;
+  btn.textContent='Saving…';btn.disabled=true;
+
+  const raca=document.getElementById('g-raca').value.trim();
+  const detalhe=document.getElementById('g-detalhe').value.trim();
+  const horario=document.getElementById('g-horario').value;
+  const valor=document.getElementById('g-valor').value;
+  const valorg=document.getElementById('g-valorg').value;
+  const tip=document.getElementById('g-tip').value;
+  const data=document.getElementById('g-data').value;
+
+  const isEdit=_editIndex>0;
+  const params=new URLSearchParams({
+    action: isEdit?'editGrooming':'addGrooming',
+    nome,raca,
+    servico:_selectedSvc,
+    detalhe,horario,valor,
+    valorG:valorg,
+    tip,data,
+    t:Date.now()
+  });
+  if(isEdit) params.set('row',_editIndex);
+
+  try{
+    await fetch(`${C.API}?${params.toString()}`);
+    closeAddGroom();
+    loadGroom();
+  }catch{
+    err.textContent='Erro ao salvar. Tente novamente.';
+    err.style.display='block';
+  }finally{
+    btn.textContent=origText;btn.disabled=false;
+  }
+}
+
+document.getElementById('goverlay').onclick=e=>{
+  if(e.target===document.getElementById('goverlay')) closeAddGroom();
+};
+</script>
+</body>
+</html>
