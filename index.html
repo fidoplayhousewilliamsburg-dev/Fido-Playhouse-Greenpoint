@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Fido Playhouse - Greenpoint</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Righteous&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Righteous&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
+<noscript><link href="https://fonts.googleapis.com/css2?family=Righteous&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/></noscript>
 <style>
 :root{
   --bp:#4C82A8;--bl:#AFCDD7;--bd:#2E5665;--bx:#4C82A8;--ow:#F6F7F0;--or:#D76B00;
@@ -563,7 +565,7 @@ function dogHalf(dog,idx,side){
 }
 
 // Virtual rendering — only 3 slides rendered at a time
-const isMobile=()=>window.innerWidth<=430;
+const isMobile=()=>window.innerWidth<=480;
 
 function buildSlides(list){
   const ss=$('slideshow'),dt=$('dots');
