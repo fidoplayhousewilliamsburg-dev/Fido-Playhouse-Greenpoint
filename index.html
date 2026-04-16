@@ -732,6 +732,18 @@ async function loadDogs(){
 
 loadDogs();setInterval(loadDogs,C.REF*1000);
 
+// Sync extras entre devices a cada 15s independente de mudança na lista
+setInterval(async()=>{
+  if(!dogs.length) return;
+  const prevESig=extrasSig;
+  await syncExtras(dogs);
+  const newESig=dogs.map(d=>JSON.stringify(d.extras)).join('|');
+  if(newESig!==prevESig){
+    extrasSig=newESig;window._dogs=dogs;
+    _invalidate();if(window._pairs)_renderNearby(cur,window._pairs);
+  }
+},15000);
+
 // ── EXTRAS ────────────────────────────────────────────────────────────────
 const eKey=dog=>'extras_'+String(dog.id||dog.name).replace(/\s+/g,'_');
 function saveExtras(dog){
@@ -1576,6 +1588,12 @@ function confirmPickupEdit(){
   _pickupEditing=false;$('pickup-toolbar').style.display='none';$('pickup-edit-btn').style.display='block';renderPickupGroups();
 }
 
-</script>
+function closeListDetail(){
+  $('list-detail').style.display='none';
+  $('list-detail-blur').style.backgroundImage='none';
+  $('list-detail-photo').style.backgroundImage='none';
+  $('list-detail-info').innerHTML='';
+  renderDogsList();
+}</script>
 </body>
 </html>
