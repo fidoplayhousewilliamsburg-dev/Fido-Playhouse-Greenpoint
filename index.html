@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
-<title>Fido Playhouse — Greenpoint · Today</title>
+<title>Fido Playhouse — Williamsburg · Today</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Lato:wght@400;700;900&display=swap" rel="stylesheet"/>
@@ -25,6 +25,43 @@
 html,body{height:100%;overflow:hidden}
 body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
 .app{height:100vh;display:flex;flex-direction:column}
+
+/* ─── Splash screen ──────────────────────────────────────────────────────
+   Shown on initial page load only. Fades out once Firestore has delivered
+   the first snapshot AND a minimum visible duration has elapsed (so the
+   animation is intentional, not a flash). Hidden completely after fade-out;
+   never re-appears for mode switches. */
+#splash{
+  position:fixed;inset:0;z-index:1000;
+  background:linear-gradient(135deg, var(--bp-dark) 0%, var(--bp-darker) 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;
+  opacity:1;
+  transition:opacity 400ms ease-out;
+  pointer-events:none;
+}
+#splash.fade-out{opacity:0}
+#splash.gone{display:none}
+.splash-logo{
+  width:120px;height:120px;
+  display:flex;align-items:center;justify-content:center;
+  filter:drop-shadow(0 8px 24px rgba(0,0,0,.35));
+  animation:splash-breathe 2.4s ease-in-out infinite;
+}
+.splash-logo img{width:100%;height:100%;object-fit:contain}
+@keyframes splash-breathe{
+  0%, 100% { transform: scale(1);   opacity: .92 }
+  50%      { transform: scale(1.06); opacity: 1   }
+}
+.splash-brand{
+  font-family:'Righteous',sans-serif;
+  font-size:28px;letter-spacing:.5px;color:var(--white);
+  text-align:center;
+}
+.splash-loc{
+  font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--gold-light);font-weight:700;margin-top:6px;
+}
 
 .topbar{flex-shrink:0;padding:env(safe-area-inset-top) 24px 0;background:#2E5665;border-bottom:1px solid var(--border-soft);z-index:50}
 .topbar-inner{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:14px;height:60px}
@@ -48,13 +85,30 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
 #display{position:absolute;inset:0;display:none}
 #display.on{display:block}
 .slide{position:absolute;inset:0;display:flex}
-.slide-half{flex:1;height:100%;position:relative;overflow:hidden;border-right:1px solid rgba(255,255,255,.16)}
+.slide-half{
+  flex:1;height:100%;position:relative;overflow:hidden;
+  border-right:1px solid rgba(255,255,255,.16);
+  contain:layout paint;
+  background:var(--bp-darker);
+}
 .slide-half:last-child{border-right:none}
-.bg-blur{position:absolute;inset:-6%;background-size:cover;background-position:center;filter:blur(24px) brightness(.55);z-index:0}
-.bg-photo{position:absolute;inset:0;background-size:contain;background-position:center 38%;background-repeat:no-repeat;z-index:1}
-.bg-overlay{position:absolute;inset:0;z-index:2;background:linear-gradient(to bottom,rgba(46,86,101,0) 0%,rgba(46,86,101,0) 40%,rgba(46,86,101,.6) 70%,rgba(46,86,101,.97) 100%)}
+
+.slide-photo{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:contain;object-position:center 38%;
+  z-index:1;
+}
+.slide-photo-bg{
+  position:absolute;inset:-6%;width:112%;height:112%;
+  object-fit:cover;
+  filter:blur(14px) brightness(.55);
+  z-index:0;
+  will-change:filter;
+  transform:translateZ(0);
+}
+.bg-overlay{position:absolute;inset:0;z-index:2;background:linear-gradient(to bottom,rgba(46,86,101,0) 0%,rgba(46,86,101,0) 40%,rgba(46,86,101,.6) 70%,rgba(46,86,101,.97) 100%);pointer-events:none}
 .bg-fallback{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--bp-darker),var(--bp));font-family:'Righteous',sans-serif;font-size:clamp(60px,12vw,140px);color:rgba(201,169,110,.4);letter-spacing:4px}
-.slide-info{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:0 44px 56px}
+.slide-info{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:0 44px 56px;pointer-events:none}
 .slide-name{font-family:'Righteous',sans-serif;font-size:clamp(40px,7vw,82px);line-height:.95;letter-spacing:-1px;color:var(--white);text-shadow:0 4px 18px rgba(0,0,0,.45);margin-bottom:8px}
 .slide-breed{font-size:clamp(13px,1.5vw,18px);font-weight:700;letter-spacing:2.2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:16px;text-shadow:0 2px 6px rgba(0,0,0,.4)}
 .slide-badges{display:flex;gap:7px;flex-wrap:wrap}
@@ -92,8 +146,25 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
 .section-icon{width:28px;height:28px;border-radius:8px;background:var(--glass);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--gold-light)}
 .section-icon svg{width:15px;height:15px}
 .dog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.dog-card{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;position:relative}
-.dog-photo{width:58px;height:58px;border-radius:50%;flex-shrink:0;background-size:cover;background-position:center;background-color:rgba(255,255,255,.08);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Righteous',sans-serif;font-size:18px;color:var(--gold-light)}
+.dog-card{
+  background:var(--glass);border:1px solid var(--border);border-radius:16px;
+  padding:16px;display:flex;align-items:center;gap:12px;position:relative;
+  contain:layout paint;
+}
+.dog-photo{
+  width:58px;height:58px;border-radius:50%;flex-shrink:0;
+  background-color:rgba(255,255,255,.08);
+  border:2px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Righteous',sans-serif;font-size:18px;color:var(--gold-light);
+  overflow:hidden;
+  position:relative;
+}
+.dog-photo img{
+  width:100%;height:100%;
+  object-fit:cover;
+  display:block;
+}
 .dog-info{flex:1;min-width:0}
 .dog-name{font-family:'Righteous',sans-serif;font-size:17px;color:var(--white);letter-spacing:.2px;line-height:1.1;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dog-breed{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -137,10 +208,24 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
   .list-inner{padding:18px 14px 50px}
   .page-title{font-size:24px}
   .dog-grid{grid-template-columns:1fr;gap:10px}
+  .splash-logo{width:90px;height:90px}
+  .splash-brand{font-size:22px}
+  .splash-loc{font-size:10px;letter-spacing:2.5px}
 }
 </style>
 </head>
 <body>
+
+<!-- Splash screen: visible on initial load, fades out when ready -->
+<div id="splash">
+  <div class="splash-logo">
+    <img src="https://fidoplayhouseny.com/assets/img/logo-fido.png" alt="Fido"/>
+  </div>
+  <div>
+    <div class="splash-brand">Fido Playhouse</div>
+    <div class="splash-loc">Williamsburg</div>
+  </div>
+</div>
 
 <div class="app">
   <header class="topbar">
@@ -149,7 +234,7 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
         <div class="brand-mark"><img src="https://fidoplayhouseny.com/assets/img/logo-fido.png" alt="Fido"/></div>
         <div class="brand-text">
           <span class="brand-name">Fido Playhouse</span>
-          <span class="brand-loc" id="brand-loc">Greenpoint</span>
+          <span class="brand-loc" id="brand-loc">Williamsburg</span>
         </div>
       </div>
       <div class="live-pill">
@@ -194,7 +279,7 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
         <div class="page-head">
           <div>
             <h1 class="page-title">Today's Guests</h1>
-            <div class="page-sub" id="list-address">975 Manhattan Ave · Brooklyn</div>
+            <div class="page-sub" id="list-address">420 Kent Ave · Brooklyn</div>
           </div>
           <div class="head-stats">
             <div class="stat-pill">
@@ -219,7 +304,7 @@ import {
   getFirestore, collection, query, where, onSnapshot, doc, getDoc, Timestamp
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 
-const LOCATION_ID = 'greenpoint';
+const LOCATION_ID = 'williamsburg';
 const SLIDE_DURATION = 8000;
 
 const firebaseConfig = {
@@ -247,8 +332,92 @@ let curIdx = 0;
 let slideTimer = null;
 let renderRequested = false;
 let lastRenderedKey = null;
+let lastRenderedMode = null;
 
-// Helpers
+const decodedUrls = new Set();
+
+// ─── Splash screen lifecycle ─────────────────────────────────────────────
+// Splash starts visible (HTML loads with #splash present). We hide it when:
+//   1. The first Firestore snapshot has arrived AND been rendered, AND
+//   2. A minimum visible duration has elapsed (so the animation reads as
+//      intentional, not a glitch).
+// Or: a maximum timeout fires (safety net so a network failure doesn't
+// trap the user behind the splash forever).
+const SPLASH_MIN_MS = 800;   // never less than this → animation is visible
+const SPLASH_MAX_MS = 4000;  // never more than this → bail out if data is slow
+const splashStart = performance.now();
+let splashHidden = false;
+
+function hideSplash(){
+  if(splashHidden) return;
+  splashHidden = true;
+  const elapsed = performance.now() - splashStart;
+  const remaining = Math.max(0, SPLASH_MIN_MS - elapsed);
+  setTimeout(() => {
+    const el = $('splash');
+    if(!el) return;
+    el.classList.add('fade-out');
+    // After the CSS transition completes, fully remove from layout.
+    setTimeout(() => el.classList.add('gone'), 450);
+  }, remaining);
+}
+// Safety net: if data hasn't arrived after SPLASH_MAX_MS, hide anyway so the
+// user isn't stuck on the splash because of a network problem.
+setTimeout(hideSplash, SPLASH_MAX_MS);
+
+// ─── Thumbnail cache (PERF) ───────────────────────────────────────────────
+const THUMB_SIZE = 120;
+const thumbCache = new Map();
+const thumbInFlight = new Map();
+
+function makeThumb(url){
+  if(!url) return Promise.resolve(null);
+  if(thumbCache.has(url)) return Promise.resolve(thumbCache.get(url));
+  if(thumbInFlight.has(url)) return thumbInFlight.get(url);
+
+  const promise = new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.decoding = 'async';
+    img.onload = () => {
+      try{
+        const canvas = document.createElement('canvas');
+        canvas.width = THUMB_SIZE;
+        canvas.height = THUMB_SIZE;
+        const ctx = canvas.getContext('2d');
+        const sw = img.naturalWidth, sh = img.naturalHeight;
+        if(!sw || !sh){ thumbCache.set(url, null); resolve(null); return; }
+        const scale = Math.max(THUMB_SIZE / sw, THUMB_SIZE / sh);
+        const dw = sw * scale, dh = sh * scale;
+        const dx = (THUMB_SIZE - dw) / 2, dy = (THUMB_SIZE - dh) / 2;
+        ctx.drawImage(img, dx, dy, dw, dh);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        thumbCache.set(url, dataUrl);
+        resolve(dataUrl);
+      }catch(e){
+        thumbCache.set(url, null);
+        resolve(null);
+      }
+    };
+    img.onerror = () => { thumbCache.set(url, null); resolve(null); };
+    img.src = url;
+  }).finally(() => { thumbInFlight.delete(url); });
+
+  thumbInFlight.set(url, promise);
+  return promise;
+}
+
+function warmupThumbs(dogs){
+  for(const dog of dogs){
+    const url = dogPhoto(dog);
+    if(!url || thumbCache.has(url) || thumbInFlight.has(url)) continue;
+    makeThumb(url).then(() => {
+      if(currentMode === 'list') requestRender(true);
+    });
+  }
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function tsToDate(ts){
   if(!ts) return null;
@@ -328,6 +497,15 @@ const SECTION_DEFS = [
   {key:'other',label:'Other',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>'},
 ];
 
+function predecode(url){
+  if(!url || decodedUrls.has(url)) return;
+  decodedUrls.add(url);
+  const img = new Image();
+  img.decoding = 'async';
+  img.src = url;
+  if(img.decode){ img.decode().catch(() => {}); }
+}
+
 // Clock
 function tickClock(){
   const n=new Date();
@@ -337,7 +515,7 @@ function tickClock(){
 tickClock();
 setInterval(tickClock, 30000);
 
-// Boundary watcher (only triggers re-render when 19:30 / midnight crossed)
+// Boundary watcher
 let lastBoundary = isAfter1930();
 let lastDateKey = new Date().toDateString();
 setInterval(() => {
@@ -349,24 +527,23 @@ setInterval(() => {
   }
 }, 60000);
 
-// Filter + dedup
 function shouldShow(appt){
   const status = String(appt.status||'').toLowerCase();
-  if(['checked_out','canceled','cancelled','no_show'].includes(status)) return false;
+  if(['canceled','cancelled','no_show'].includes(status)) return false;
   const now = new Date();
-  const ci = tsToDate(appt.startDate || appt.checkInAt || appt.checkInTime);
+  const ci = tsToDate(appt.checkInAt || appt.checkInTime || appt.startDate);
   const co = tsToDate(appt.endDate || appt.checkOutTime);
   if(!ci) return false;
   if(ci > now) return false;
   if(!co) return true;
-  if(co < now) return false;
+  if(co < now && !isSameDay(co, now)) return false;
   if(isAfter1930() && isSameDay(co, now)) return false;
   return true;
 }
 function score(a){
   let s = 0;
   if(a.status === 'checked_in') s += 1e9;
-  const t = tsToDate(a.startDate || a.checkInAt || a.updatedAt || a.createdAt);
+  const t = tsToDate(a.checkInAt || a.startDate || a.updatedAt || a.createdAt);
   if(t) s += t.getTime() / 1000;
   return s;
 }
@@ -397,13 +574,12 @@ async function buildVisibleDogs(){
     const aB = isBirthdayToday(a.dog.dob) !== null ? 1 : 0;
     const bB = isBirthdayToday(b.dog.dob) !== null ? 1 : 0;
     if(aB !== bB) return bB - aB;
-    const ca = tsToDate(a.appt.startDate || a.appt.checkInAt)?.getTime() || 0;
-    const cb = tsToDate(b.appt.startDate || b.appt.checkInAt)?.getTime() || 0;
+    const ca = tsToDate(a.appt.checkInAt || a.appt.startDate)?.getTime() || 0;
+    const cb = tsToDate(b.appt.checkInAt || b.appt.startDate)?.getTime() || 0;
     return ca - cb;
   });
 }
 
-// Coalesce snapshot updates to one render per animation frame
 function requestRender(force){
   if(force) lastRenderedKey = null;
   if(renderRequested) return;
@@ -411,14 +587,18 @@ function requestRender(force){
   requestAnimationFrame(async () => {
     renderRequested = false;
     await buildVisibleDogs();
-    // Skip render if visible state didn't change
     const key = visibleDogs.map(e =>
       e.appt.id+':'+e.dog.id+':'+(e.appt.status||'')+':'+(e.appt.type||'')+':'+(e.appt.endDate?.seconds||0)
     ).join('|') + '#' + currentMode;
-    if(key === lastRenderedKey) return;
+    if(key === lastRenderedKey && !force) return;
     lastRenderedKey = key;
-    renderList();
-    renderDisplay();
+    lastRenderedMode = currentMode;
+    warmupThumbs(visibleDogs.map(v => v.dog));
+    if(currentMode === 'list') renderList();
+    else renderDisplay();
+    // The first render after data arrival is when the page is "ready".
+    // Hide the splash now (subject to SPLASH_MIN_MS minimum).
+    hideSplash();
   });
 }
 
@@ -464,8 +644,14 @@ function renderList(){
 function renderListCard({appt, dog}){
   const photo = dogPhoto(dog);
   const initials = dogInitials(dog.name);
-  const photoStyle = photo ? `background-image:url('${escapeHtml(photo)}');background-color:transparent` : '';
-  const photoInner = photo ? '' : initials;
+  let imgSrc = '';
+  if(photo){
+    const cached = thumbCache.get(photo);
+    imgSrc = cached || photo;
+  }
+  const photoInner = photo
+    ? `<img src="${escapeHtml(imgSrc)}" alt="" loading="lazy" decoding="async"/>`
+    : initials;
   const bdayAge = isBirthdayToday(dog.dob);
   const age = calcAge(dog.dob);
   const gender = genderLabel(dog.gender);
@@ -482,7 +668,7 @@ function renderListCard({appt, dog}){
 
   return `<article class="dog-card">
     ${bdayAge!==null?`<div class="dog-bday" title="Birthday today!">🎂</div>`:''}
-    <div class="dog-photo" style="${photoStyle}">${photoInner}</div>
+    <div class="dog-photo">${photoInner}</div>
     <div class="dog-info">
       <div class="dog-name">${escapeHtml(dog.name||'—')}</div>
       <div class="dog-breed">${escapeHtml(dog.breed||'—')}</div>
@@ -538,7 +724,22 @@ function renderDisplay(){
     $('next').style.display = 'none';
   }
 
+  schedulePredecodeNext();
+
   if(currentMode === 'display') startAutoplay();
+}
+
+function schedulePredecodeNext(){
+  if(pairs.length <= 1) return;
+  const nextIdx = (curIdx + 1) % pairs.length;
+  const nextPair = pairs[nextIdx] || [];
+  const urls = nextPair.map(({dog}) => dogPhoto(dog)).filter(Boolean);
+  const run = () => urls.forEach(predecode);
+  if(typeof requestIdleCallback === 'function'){
+    requestIdleCallback(run, {timeout: 1500});
+  }else{
+    setTimeout(run, 100);
+  }
 }
 
 function renderSlideHalf({appt, dog}){
@@ -560,8 +761,8 @@ function renderSlideHalf({appt, dog}){
   if(age) badges.push(`<span class="slide-badge">${age}</span>`);
 
   const photoBlock = photo
-    ? `<div class="bg-blur" style="background-image:url('${escapeHtml(photo)}')"></div>
-       <div class="bg-photo" style="background-image:url('${escapeHtml(photo)}')"></div>`
+    ? `<img class="slide-photo-bg" src="${escapeHtml(photo)}" alt="" decoding="async" aria-hidden="true"/>
+       <img class="slide-photo" src="${escapeHtml(photo)}" alt="" decoding="async"/>`
     : `<div class="bg-fallback">${dogInitials(dog.name)}</div>`;
 
   return `<div class="slide-half${bdayAge!==null?' bday':''}">
@@ -579,11 +780,10 @@ function renderSlideHalf({appt, dog}){
 function goTo(idx){
   if(!pairs.length) return;
   curIdx = ((idx % pairs.length) + pairs.length) % pairs.length;
-  // Re-render only the slide content, not the dots/counter (avoid thrashing)
   const ss = $('slideshow');
   ss.innerHTML = `<div class="slide">${pairs[curIdx].map(renderSlideHalf).join('')}</div>`;
-  // Update active dot
   [...$('dots').querySelectorAll('.dot')].forEach((d,i) => d.classList.toggle('on', i === curIdx));
+  schedulePredecodeNext();
   startAutoplay();
 }
 
@@ -622,18 +822,33 @@ window.addEventListener('resize', () => {
   }
 });
 
-// Mode
 function setMode(mode){
+  const previousMode = currentMode;
   currentMode = mode;
   localStorage.setItem('fido_staff_mode_v2', mode);
   $('btn-display').classList.toggle('on', mode === 'display');
   $('btn-list').classList.toggle('on', mode === 'list');
   $('display').classList.toggle('on', mode === 'display');
   $('list').classList.toggle('on', mode === 'list');
-  if(mode === 'display'){
-    if(pairs.length > 0) startAutoplay();
+
+  if(previousMode && previousMode !== mode){
+    if(previousMode === 'display'){
+      $('slideshow').innerHTML = '';
+      pairs = [];
+      curIdx = 0;
+      stopAutoplay();
+    }else{
+      $('list-content').innerHTML = '';
+    }
+  }
+
+  if(mode === 'list'){
+    if(lastRenderedMode !== 'list') renderList();
+    lastRenderedMode = 'list';
   }else{
-    stopAutoplay();
+    if(lastRenderedMode !== 'display') renderDisplay();
+    lastRenderedMode = 'display';
+    if(pairs.length > 0) startAutoplay();
   }
 }
 $('btn-display').addEventListener('click', () => setMode('display'));
@@ -657,6 +872,8 @@ const unsub = onSnapshot(q,
     console.error('Snapshot error', err);
     $('err').textContent = 'Connection error: '+(err.message||err.code||'unknown');
     $('err').classList.add('show');
+    // Hide splash on connection error too — user shouldn't be stuck.
+    hideSplash();
   }
 );
 
