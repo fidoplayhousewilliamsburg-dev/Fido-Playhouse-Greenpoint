@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
-<title>Fido Playhouse — Williamsburg · Today</title>
+<title>Fido Playhouse — Greenpoint · Today</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Lato:wght@400;700;900&display=swap" rel="stylesheet"/>
@@ -28,9 +28,7 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
 
 /* ─── Splash screen ──────────────────────────────────────────────────────
    Shown on initial page load only. Fades out once Firestore has delivered
-   the first snapshot AND a minimum visible duration has elapsed (so the
-   animation is intentional, not a flash). Hidden completely after fade-out;
-   never re-appears for mode switches. */
+   the first snapshot AND a minimum visible duration has elapsed. */
 #splash{
   position:fixed;inset:0;z-index:1000;
   background:linear-gradient(135deg, var(--bp-dark) 0%, var(--bp-darker) 100%);
@@ -223,7 +221,7 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
   </div>
   <div>
     <div class="splash-brand">Fido Playhouse</div>
-    <div class="splash-loc">Williamsburg</div>
+    <div class="splash-loc">Greenpoint</div>
   </div>
 </div>
 
@@ -234,7 +232,7 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
         <div class="brand-mark"><img src="https://fidoplayhouseny.com/assets/img/logo-fido.png" alt="Fido"/></div>
         <div class="brand-text">
           <span class="brand-name">Fido Playhouse</span>
-          <span class="brand-loc" id="brand-loc">Williamsburg</span>
+          <span class="brand-loc" id="brand-loc">Greenpoint</span>
         </div>
       </div>
       <div class="live-pill">
@@ -279,7 +277,7 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
         <div class="page-head">
           <div>
             <h1 class="page-title">Today's Guests</h1>
-            <div class="page-sub" id="list-address">420 Kent Ave · Brooklyn</div>
+            <div class="page-sub" id="list-address">975 Manhattan Ave · Brooklyn</div>
           </div>
           <div class="head-stats">
             <div class="stat-pill">
@@ -304,7 +302,7 @@ import {
   getFirestore, collection, query, where, onSnapshot, doc, getDoc, Timestamp
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 
-const LOCATION_ID = 'williamsburg';
+const LOCATION_ID = 'greenpoint';
 const SLIDE_DURATION = 8000;
 
 const firebaseConfig = {
@@ -337,14 +335,8 @@ let lastRenderedMode = null;
 const decodedUrls = new Set();
 
 // ─── Splash screen lifecycle ─────────────────────────────────────────────
-// Splash starts visible (HTML loads with #splash present). We hide it when:
-//   1. The first Firestore snapshot has arrived AND been rendered, AND
-//   2. A minimum visible duration has elapsed (so the animation reads as
-//      intentional, not a glitch).
-// Or: a maximum timeout fires (safety net so a network failure doesn't
-// trap the user behind the splash forever).
-const SPLASH_MIN_MS = 800;   // never less than this → animation is visible
-const SPLASH_MAX_MS = 4000;  // never more than this → bail out if data is slow
+const SPLASH_MIN_MS = 800;
+const SPLASH_MAX_MS = 4000;
 const splashStart = performance.now();
 let splashHidden = false;
 
@@ -357,12 +349,9 @@ function hideSplash(){
     const el = $('splash');
     if(!el) return;
     el.classList.add('fade-out');
-    // After the CSS transition completes, fully remove from layout.
     setTimeout(() => el.classList.add('gone'), 450);
   }, remaining);
 }
-// Safety net: if data hasn't arrived after SPLASH_MAX_MS, hide anyway so the
-// user isn't stuck on the splash because of a network problem.
 setTimeout(hideSplash, SPLASH_MAX_MS);
 
 // ─── Thumbnail cache (PERF) ───────────────────────────────────────────────
@@ -596,8 +585,6 @@ function requestRender(force){
     warmupThumbs(visibleDogs.map(v => v.dog));
     if(currentMode === 'list') renderList();
     else renderDisplay();
-    // The first render after data arrival is when the page is "ready".
-    // Hide the splash now (subject to SPLASH_MIN_MS minimum).
     hideSplash();
   });
 }
@@ -872,7 +859,6 @@ const unsub = onSnapshot(q,
     console.error('Snapshot error', err);
     $('err').textContent = 'Connection error: '+(err.message||err.code||'unknown');
     $('err').classList.add('show');
-    // Hide splash on connection error too — user shouldn't be stuck.
     hideSplash();
   }
 );
