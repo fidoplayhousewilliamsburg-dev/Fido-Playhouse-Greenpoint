@@ -26,20 +26,19 @@ html,body{height:100%;overflow:hidden}
 body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
 .app{height:100vh;display:flex;flex-direction:column}
 
-/* ─── Splash screen ──────────────────────────────────────────────────────
-   Shown on initial page load only. Fades out once Firestore has delivered
-   the first snapshot AND a minimum visible duration has elapsed. */
+/* ─── Splash screen ────────────────────────────────────────────────────── */
 #splash{
   position:fixed;inset:0;z-index:1000;
   background:linear-gradient(135deg, var(--bp-dark) 0%, var(--bp-darker) 100%);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:20px;
+  gap:24px;
   opacity:1;
   transition:opacity 400ms ease-out;
   pointer-events:none;
 }
 #splash.fade-out{opacity:0}
 #splash.gone{display:none}
+.splash-stack{display:flex;flex-direction:column;align-items:center;gap:18px}
 .splash-logo{
   width:120px;height:120px;
   display:flex;align-items:center;justify-content:center;
@@ -51,15 +50,23 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
   0%, 100% { transform: scale(1);   opacity: .92 }
   50%      { transform: scale(1.06); opacity: 1   }
 }
-.splash-brand{
-  font-family:'Righteous',sans-serif;
-  font-size:28px;letter-spacing:.5px;color:var(--white);
-  text-align:center;
-}
-.splash-loc{
-  font-size:11px;letter-spacing:3px;text-transform:uppercase;
-  color:var(--gold-light);font-weight:700;margin-top:6px;
-}
+.splash-text{display:flex;flex-direction:column;align-items:center;gap:6px}
+.splash-brand{font-family:'Righteous',sans-serif;font-size:28px;letter-spacing:.5px;color:var(--white);text-align:center;line-height:1}
+.splash-loc{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-light);font-weight:700;text-align:center}
+.splash-loader{display:flex;align-items:center;gap:14px;margin-top:10px}
+.splash-loader-text{font-size:11px;letter-spacing:2.4px;text-transform:uppercase;color:var(--muted);font-weight:700}
+.orbit{position:relative;width:24px;height:24px;animation:orbit-spin 1.1s linear infinite}
+.orbit::before{content:'';position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(201,169,110,.18)}
+.orbit-dot{position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px rgba(201,169,110,.7)}
+.orbit-trail-1, .orbit-trail-2, .orbit-trail-3{position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--gold);pointer-events:none}
+.orbit-trail-1{opacity:.55}
+.orbit-trail-2{opacity:.30}
+.orbit-trail-3{opacity:.14}
+@keyframes orbit-spin{ to { transform: rotate(360deg) } }
+.orbit-trail-wrap{position:absolute;inset:0;animation:orbit-spin 1.1s linear infinite}
+.orbit-trail-wrap.t1{ animation-delay:-1.05s }
+.orbit-trail-wrap.t2{ animation-delay:-1.0s }
+.orbit-trail-wrap.t3{ animation-delay:-0.95s }
 
 .topbar{flex-shrink:0;padding:env(safe-area-inset-top) 24px 0;background:#2E5665;border-bottom:1px solid var(--border-soft);z-index:50}
 .topbar-inner{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:14px;height:60px}
@@ -71,39 +78,32 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
 .brand-loc{font-size:9px;letter-spacing:2.2px;text-transform:uppercase;color:var(--gold-light);font-weight:700;margin-top:2px}
 .live-pill{justify-self:center;display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:100px;background:var(--glass);border:1px solid var(--border);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;font-weight:700;color:var(--muted)}
 .live-dot{width:7px;height:7px;border-radius:50%;background:#5CD68A}
+
 .mode-toggle{display:flex;background:var(--glass);border:1px solid var(--border);border-radius:100px;padding:3px;gap:2px}
-.mode-btn{padding:6px 14px;border-radius:100px;border:none;background:transparent;color:var(--muted);font-family:'Lato',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:5px}
+.mode-btn{position:relative;padding:6px 14px;border-radius:100px;border:none;background:transparent;color:var(--muted);font-family:'Lato',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:5px}
 .mode-btn svg{width:13px;height:13px}
 .mode-btn.on{background:var(--gold);color:var(--bp-darker)}
+.bday-indicator{width:6px;height:6px;border-radius:50%;background:var(--gold-light);box-shadow:0 0 0 0 rgba(215,186,129,.6);animation:bday-pulse 1.6s ease-in-out infinite;display:none}
+.bday-indicator.show{display:inline-block}
+.mode-btn.on .bday-indicator{background:var(--bp-darker)}
+@keyframes bday-pulse{
+  0%, 100%{ box-shadow:0 0 0 0 rgba(215,186,129,.6) }
+  50%{ box-shadow:0 0 0 5px rgba(215,186,129,0) }
+}
+
 .clock{display:flex;flex-direction:column;align-items:flex-end;line-height:1.05}
 .clock-time{font-family:'Righteous',sans-serif;font-size:18px;letter-spacing:.5px;color:var(--white);font-variant-numeric:tabular-nums}
 .clock-date{font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:2px}
 
 .main{flex:1;position:relative;overflow:hidden}
+
 #display{position:absolute;inset:0;display:none}
 #display.on{display:block}
 .slide{position:absolute;inset:0;display:flex}
-.slide-half{
-  flex:1;height:100%;position:relative;overflow:hidden;
-  border-right:1px solid rgba(255,255,255,.16);
-  contain:layout paint;
-  background:var(--bp-darker);
-}
+.slide-half{flex:1;height:100%;position:relative;overflow:hidden;border-right:1px solid rgba(255,255,255,.16);contain:layout paint;background:var(--bp-darker)}
 .slide-half:last-child{border-right:none}
-
-.slide-photo{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:contain;object-position:center 38%;
-  z-index:1;
-}
-.slide-photo-bg{
-  position:absolute;inset:-6%;width:112%;height:112%;
-  object-fit:cover;
-  filter:blur(14px) brightness(.55);
-  z-index:0;
-  will-change:filter;
-  transform:translateZ(0);
-}
+.slide-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center 38%;z-index:1}
+.slide-photo-bg{position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover;filter:blur(14px) brightness(.55);z-index:0;will-change:filter;transform:translateZ(0)}
 .bg-overlay{position:absolute;inset:0;z-index:2;background:linear-gradient(to bottom,rgba(46,86,101,0) 0%,rgba(46,86,101,0) 40%,rgba(46,86,101,.6) 70%,rgba(46,86,101,.97) 100%);pointer-events:none}
 .bg-fallback{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--bp-darker),var(--bp));font-family:'Righteous',sans-serif;font-size:clamp(60px,12vw,140px);color:rgba(201,169,110,.4);letter-spacing:4px}
 .slide-info{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:0 44px 56px;pointer-events:none}
@@ -144,25 +144,9 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
 .section-icon{width:28px;height:28px;border-radius:8px;background:var(--glass);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--gold-light)}
 .section-icon svg{width:15px;height:15px}
 .dog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.dog-card{
-  background:var(--glass);border:1px solid var(--border);border-radius:16px;
-  padding:16px;display:flex;align-items:center;gap:12px;position:relative;
-  contain:layout paint;
-}
-.dog-photo{
-  width:58px;height:58px;border-radius:50%;flex-shrink:0;
-  background-color:rgba(255,255,255,.08);
-  border:2px solid var(--gold);
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Righteous',sans-serif;font-size:18px;color:var(--gold-light);
-  overflow:hidden;
-  position:relative;
-}
-.dog-photo img{
-  width:100%;height:100%;
-  object-fit:cover;
-  display:block;
-}
+.dog-card{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;position:relative;contain:layout paint}
+.dog-photo{width:58px;height:58px;border-radius:50%;flex-shrink:0;background-color:rgba(255,255,255,.08);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Righteous',sans-serif;font-size:18px;color:var(--gold-light);overflow:hidden;position:relative}
+.dog-photo img{width:100%;height:100%;object-fit:cover;display:block}
 .dog-info{flex:1;min-width:0}
 .dog-name{font-family:'Righteous',sans-serif;font-size:17px;color:var(--white);letter-spacing:.2px;line-height:1.1;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dog-breed{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -172,6 +156,77 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
 .badge.checkout{background:rgba(215,107,0,.16);border-color:rgba(215,107,0,.4);color:#F0A050}
 .badge.boarding{background:rgba(122,172,184,.18);border-color:rgba(122,172,184,.45);color:#A8D0DC}
 .dog-bday{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px}
+
+#birthday{position:absolute;inset:0;display:none;overflow-y:auto}
+#birthday.on{display:block}
+
+.bday-hero{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg, var(--bp-darker) 0%, #1F3F4A 100%);
+  overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px;
+}
+.bday-hero-photo-frame{
+  position:relative;
+  width:min(38vh, 280px);height:min(38vh, 280px);
+  border-radius:50%;
+  border:5px solid var(--gold);
+  overflow:hidden;
+  box-shadow:0 12px 40px rgba(0,0,0,.5), 0 0 0 12px rgba(201,169,110,.12);
+  margin-bottom:28px;
+  animation:bday-float 4s ease-in-out infinite;
+  z-index:2;
+}
+.bday-hero-photo-frame img{width:100%;height:100%;object-fit:cover;display:block}
+.bday-hero-photo-fallback{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--bp-dark),var(--bp));
+  font-family:'Righteous',sans-serif;font-size:80px;color:var(--gold-light);
+}
+@keyframes bday-float{
+  0%, 100%{ transform:translateY(0) }
+  50%{ transform:translateY(-8px) }
+}
+.bday-hero-greeting{font-family:'Righteous',sans-serif;font-size:clamp(14px, 2vw, 20px);letter-spacing:4px;text-transform:uppercase;color:var(--gold-light);font-weight:400;margin-bottom:10px;text-align:center;z-index:2}
+.bday-hero-name{font-family:'Righteous',sans-serif;font-size:clamp(48px, 9vw, 110px);line-height:.95;letter-spacing:-1px;color:var(--white);text-align:center;text-shadow:0 6px 24px rgba(0,0,0,.5);margin-bottom:14px;z-index:2}
+.bday-hero-age{font-family:'Righteous',sans-serif;font-size:clamp(20px, 3vw, 32px);letter-spacing:.5px;color:var(--gold);margin-bottom:20px;text-align:center;z-index:2}
+.bday-hero-breed{font-size:clamp(12px, 1.4vw, 16px);font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.6);text-align:center;z-index:2}
+
+.confetti-piece{position:absolute;width:10px;height:14px;top:-20px;opacity:0;pointer-events:none;z-index:1;animation:confetti-fall linear infinite}
+@keyframes confetti-fall{
+  0%   { opacity:0; transform:translateY(0) rotate(0deg) }
+  10%  { opacity:1 }
+  90%  { opacity:1 }
+  100% { opacity:0; transform:translateY(110vh) rotate(720deg) }
+}
+
+.bday-hero-dots{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:20}
+.bday-hero-counter{position:absolute;top:24px;right:24px;z-index:20;background:rgba(255,255,255,.92);color:var(--bp-darker);font-size:11px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;padding:6px 14px;border-radius:100px}
+
+.bday-month{padding:32px 28px 60px;max-width:880px;margin:0 auto}
+.bday-month-head{margin-bottom:28px}
+.bday-month-title{font-family:'Righteous',sans-serif;font-size:32px;letter-spacing:-.3px;color:var(--white);line-height:1;display:flex;align-items:center;gap:14px}
+.bday-month-sub{font-size:11px;letter-spacing:1.8px;text-transform:uppercase;color:var(--gold-light);font-weight:700;margin-top:8px}
+.bday-month-empty{text-align:center;padding:60px 24px;color:var(--muted)}
+.bday-month-empty-icon{font-size:48px;margin-bottom:16px;opacity:.4}
+.bday-month-list{display:flex;flex-direction:column;gap:10px}
+.bday-month-row{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:16px;contain:layout paint}
+.bday-month-row.today{background:rgba(201,169,110,.18);border-color:rgba(201,169,110,.5)}
+.bday-month-date{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:54px;padding:6px 0;border-radius:10px;background:rgba(46,86,101,.55);border:1px solid var(--border-soft)}
+.bday-month-row.today .bday-month-date{background:var(--gold);border-color:var(--gold-light)}
+.bday-month-month{font-size:9px;letter-spacing:1.6px;text-transform:uppercase;color:var(--gold-light);font-weight:700}
+.bday-month-row.today .bday-month-month{color:var(--bp-darker)}
+.bday-month-day{font-family:'Righteous',sans-serif;font-size:20px;color:var(--white);line-height:1;margin-top:2px}
+.bday-month-row.today .bday-month-day{color:var(--bp-darker)}
+.bday-month-photo{width:46px;height:46px;border-radius:50%;border:2px solid var(--gold);flex-shrink:0;overflow:hidden;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-family:'Righteous',sans-serif;font-size:14px;color:var(--gold-light)}
+.bday-month-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.bday-month-info{flex:1;min-width:0}
+.bday-month-name{font-family:'Righteous',sans-serif;font-size:16px;color:var(--white);letter-spacing:.2px;line-height:1.1;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bday-month-breed{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bday-month-age{font-size:11px;font-weight:700;color:var(--gold-light);letter-spacing:.5px;flex-shrink:0}
+.bday-month-age.turning{color:var(--gold)}
 
 .state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px}
 .state-icon{width:72px;height:72px;border-radius:50%;background:var(--glass);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--gold-light)}
@@ -209,19 +264,31 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
   .splash-logo{width:90px;height:90px}
   .splash-brand{font-size:22px}
   .splash-loc{font-size:10px;letter-spacing:2.5px}
+  .bday-month{padding:20px 14px 50px}
+  .bday-month-title{font-size:24px}
 }
 </style>
 </head>
 <body>
 
-<!-- Splash screen: visible on initial load, fades out when ready -->
 <div id="splash">
-  <div class="splash-logo">
-    <img src="https://fidoplayhouseny.com/assets/img/logo-fido.png" alt="Fido"/>
-  </div>
-  <div>
-    <div class="splash-brand">Fido Playhouse</div>
-    <div class="splash-loc">Greenpoint</div>
+  <div class="splash-stack">
+    <div class="splash-logo">
+      <img src="https://fidoplayhouseny.com/assets/img/logo-fido.png" alt="Fido"/>
+    </div>
+    <div class="splash-text">
+      <div class="splash-brand">Fido Playhouse</div>
+      <div class="splash-loc">Greenpoint</div>
+    </div>
+    <div class="splash-loader">
+      <div class="orbit">
+        <div class="orbit-trail-wrap t3"><div class="orbit-trail-3"></div></div>
+        <div class="orbit-trail-wrap t2"><div class="orbit-trail-2"></div></div>
+        <div class="orbit-trail-wrap t1"><div class="orbit-trail-1"></div></div>
+        <div class="orbit-dot"></div>
+      </div>
+      <span class="splash-loader-text">Loading Dogs</span>
+    </div>
   </div>
 </div>
 
@@ -247,6 +314,11 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
         <button class="mode-btn" id="btn-list" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
           <span class="mode-label">List</span>
+        </button>
+        <button class="mode-btn" id="btn-birthday" type="button">
+          <span style="font-size:13px;line-height:1">🎂</span>
+          <span class="mode-label">Birthday</span>
+          <span class="bday-indicator" id="bday-indicator"></span>
         </button>
       </div>
       <div class="clock">
@@ -293,17 +365,22 @@ body{font-family:'Lato',sans-serif;color:var(--white);background:#3D6E91}
         <div id="list-content"></div>
       </div>
     </div>
+
+    <div id="birthday">
+      <div id="birthday-content"></div>
+    </div>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
 import {
-  getFirestore, collection, query, where, onSnapshot, doc, getDoc, Timestamp
+  getFirestore, collection, query, where, onSnapshot, doc, getDoc, getDocs, Timestamp
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 
 const LOCATION_ID = 'greenpoint';
 const SLIDE_DURATION = 8000;
+const BDAY_HERO_DURATION = 12000;
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
@@ -320,8 +397,7 @@ const db = getFirestore(app);
 const $ = id => document.getElementById(id);
 const isMobile = () => window.innerWidth <= 768;
 
-// State
-let currentMode = localStorage.getItem('fido_staff_mode_v2') || 'display';
+let currentMode = localStorage.getItem('fido_staff_mode_v3') || 'display';
 let currentAppointments = [];
 const dogCache = new Map();
 let visibleDogs = [];
@@ -332,11 +408,15 @@ let renderRequested = false;
 let lastRenderedKey = null;
 let lastRenderedMode = null;
 
+let allLocationDogs = null;
+let allLocationDogsLoading = false;
+let bdayCurIdx = 0;
+let bdayTimer = null;
+
 const decodedUrls = new Set();
 
-// ─── Splash screen lifecycle ─────────────────────────────────────────────
-const SPLASH_MIN_MS = 800;
-const SPLASH_MAX_MS = 4000;
+const SPLASH_MIN_MS = 4000;
+const SPLASH_MAX_MS = 6000;
 const splashStart = performance.now();
 let splashHidden = false;
 
@@ -354,7 +434,6 @@ function hideSplash(){
 }
 setTimeout(hideSplash, SPLASH_MAX_MS);
 
-// ─── Thumbnail cache (PERF) ───────────────────────────────────────────────
 const THUMB_SIZE = 120;
 const thumbCache = new Map();
 const thumbInFlight = new Map();
@@ -363,7 +442,6 @@ function makeThumb(url){
   if(!url) return Promise.resolve(null);
   if(thumbCache.has(url)) return Promise.resolve(thumbCache.get(url));
   if(thumbInFlight.has(url)) return thumbInFlight.get(url);
-
   const promise = new Promise((resolve) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -391,7 +469,6 @@ function makeThumb(url){
     img.onerror = () => { thumbCache.set(url, null); resolve(null); };
     img.src = url;
   }).finally(() => { thumbInFlight.delete(url); });
-
   thumbInFlight.set(url, promise);
   return promise;
 }
@@ -401,12 +478,11 @@ function warmupThumbs(dogs){
     const url = dogPhoto(dog);
     if(!url || thumbCache.has(url) || thumbInFlight.has(url)) continue;
     makeThumb(url).then(() => {
-      if(currentMode === 'list') requestRender(true);
+      if(currentMode === 'list' || currentMode === 'birthday') requestRender(true);
     });
   }
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function tsToDate(ts){
   if(!ts) return null;
@@ -478,6 +554,7 @@ function typeShortLabel(rawType){
   return ({halfday:'Half Day',fullday:'Full Day',boarding:'Slumber Pawty',other:String(rawType||'').trim()||'Other'})[k];
 }
 function ord(n){const s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0])}
+const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 const SECTION_DEFS = [
   {key:'halfday',label:'Half Day Daycare',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>'},
@@ -495,7 +572,6 @@ function predecode(url){
   if(img.decode){ img.decode().catch(() => {}); }
 }
 
-// Clock
 function tickClock(){
   const n=new Date();
   $('clk-time').textContent = n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:true});
@@ -504,7 +580,6 @@ function tickClock(){
 tickClock();
 setInterval(tickClock, 30000);
 
-// Boundary watcher
 let lastBoundary = isAfter1930();
 let lastDateKey = new Date().toDateString();
 setInterval(() => {
@@ -569,6 +644,50 @@ async function buildVisibleDogs(){
   });
 }
 
+async function ensureAllLocationDogs(){
+  if(allLocationDogs !== null) return allLocationDogs;
+  if(allLocationDogsLoading) return null;
+  allLocationDogsLoading = true;
+  try{
+    const snap = await getDocs(collection(db,'locations',LOCATION_ID,'dogs'));
+    allLocationDogs = snap.docs.map(d => ({id:d.id,...d.data()}));
+    return allLocationDogs;
+  }catch(e){
+    console.error('ensureAllLocationDogs fail', e);
+    allLocationDogs = [];
+    return allLocationDogs;
+  }finally{
+    allLocationDogsLoading = false;
+  }
+}
+
+function birthdayDogsToday(){
+  return visibleDogs
+    .filter(({dog}) => isBirthdayToday(dog.dob) !== null)
+    .map(({dog}) => dog);
+}
+
+function birthdayDogsThisMonth(allDogs){
+  if(!allDogs) return [];
+  const now = new Date();
+  const month = now.getMonth();
+  const today = now.getDate();
+  const list = [];
+  for(const dog of allDogs){
+    const d = tsToDate(dog.dob);
+    if(!d) continue;
+    if(d.getMonth() !== month) continue;
+    list.push({dog, day: d.getDate(), date: d});
+  }
+  list.sort((a,b) => {
+    const aFuture = a.day >= today ? 0 : 1;
+    const bFuture = b.day >= today ? 0 : 1;
+    if(aFuture !== bFuture) return aFuture - bFuture;
+    return a.day - b.day;
+  });
+  return list;
+}
+
 function requestRender(force){
   if(force) lastRenderedKey = null;
   if(renderRequested) return;
@@ -582,14 +701,23 @@ function requestRender(force){
     if(key === lastRenderedKey && !force) return;
     lastRenderedKey = key;
     lastRenderedMode = currentMode;
+
     warmupThumbs(visibleDogs.map(v => v.dog));
+    updateBirthdayIndicator();
+
     if(currentMode === 'list') renderList();
+    else if(currentMode === 'birthday') renderBirthday();
     else renderDisplay();
+
     hideSplash();
   });
 }
 
-// List render
+function updateBirthdayIndicator(){
+  const has = birthdayDogsToday().length > 0;
+  $('bday-indicator').classList.toggle('show', has);
+}
+
 function renderList(){
   const buckets = {halfday:[],fullday:[],boarding:[],other:[]};
   for(const e of visibleDogs){
@@ -664,7 +792,6 @@ function renderListCard({appt, dog}){
   </article>`;
 }
 
-// Display render
 function renderDisplay(){
   const ss = $('slideshow');
 
@@ -712,7 +839,6 @@ function renderDisplay(){
   }
 
   schedulePredecodeNext();
-
   if(currentMode === 'display') startAutoplay();
 }
 
@@ -792,6 +918,147 @@ function stopAutoplay(){
   if(bar){bar.style.transition = 'none'; bar.style.width = '0%';}
 }
 
+async function renderBirthday(){
+  const root = $('birthday-content');
+  const todayDogs = birthdayDogsToday();
+
+  if(todayDogs.length > 0){
+    stopBdayAutoplay();
+    if(bdayCurIdx >= todayDogs.length) bdayCurIdx = 0;
+    root.innerHTML = renderBdayHero(todayDogs[bdayCurIdx], todayDogs.length, bdayCurIdx, todayDogs);
+    if(todayDogs.length > 1) startBdayAutoplay(todayDogs);
+    return;
+  }
+
+  if(allLocationDogs === null){
+    root.innerHTML = `
+      <div class="bday-month">
+        <div class="bday-month-empty">
+          <div class="spinner" style="margin:0 auto 18px"></div>
+          <div class="state-title">Loading birthdays…</div>
+        </div>
+      </div>`;
+    await ensureAllLocationDogs();
+    if(currentMode !== 'birthday') return;
+  }
+
+  const monthList = birthdayDogsThisMonth(allLocationDogs);
+  warmupThumbs(monthList.map(m => m.dog));
+
+  const monthName = new Date().toLocaleDateString([], {month:'long', year:'numeric'});
+
+  if(monthList.length === 0){
+    root.innerHTML = `
+      <div class="bday-month">
+        <div class="bday-month-head">
+          <h1 class="bday-month-title">🎂 Birthdays</h1>
+          <div class="bday-month-sub">${escapeHtml(monthName)}</div>
+        </div>
+        <div class="bday-month-empty">
+          <div class="bday-month-empty-icon">🎂</div>
+          <div class="state-title">No birthdays this month</div>
+          <div class="state-text" style="margin:8px auto 0">Check back next month!</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const today = new Date().getDate();
+  let html = `<div class="bday-month">
+    <div class="bday-month-head">
+      <h1 class="bday-month-title">🎂 Birthdays</h1>
+      <div class="bday-month-sub">${escapeHtml(monthName)} · ${monthList.length} dog${monthList.length!==1?'s':''}</div>
+    </div>
+    <div class="bday-month-list">`;
+
+  for(const item of monthList){
+    const {dog, day, date} = item;
+    const photo = dogPhoto(dog);
+    const initials = dogInitials(dog.name);
+    let imgSrc = '';
+    if(photo){
+      const cached = thumbCache.get(photo);
+      imgSrc = cached || photo;
+    }
+    const photoInner = photo
+      ? `<img src="${escapeHtml(imgSrc)}" alt="" loading="lazy" decoding="async"/>`
+      : initials;
+    const isToday = day === today;
+    const turningAge = new Date().getFullYear() - date.getFullYear();
+    const ageLabel = (turningAge >= 0 && turningAge < 30)
+      ? (isToday ? `Turns ${turningAge}` : `Turning ${turningAge}`)
+      : '';
+
+    html += `<div class="bday-month-row${isToday?' today':''}">
+      <div class="bday-month-date">
+        <span class="bday-month-month">${MONTH_SHORT[date.getMonth()]}</span>
+        <span class="bday-month-day">${day}</span>
+      </div>
+      <div class="bday-month-photo">${photoInner}</div>
+      <div class="bday-month-info">
+        <div class="bday-month-name">${escapeHtml(dog.name||'—')}</div>
+        <div class="bday-month-breed">${escapeHtml(dog.breed||'—')}</div>
+      </div>
+      ${ageLabel ? `<div class="bday-month-age${isToday?' turning':''}">${escapeHtml(ageLabel)}</div>` : ''}
+    </div>`;
+  }
+  html += `</div></div>`;
+  root.innerHTML = html;
+}
+
+function renderBdayHero(dog, total, idx, allDogs){
+  const photo = dogPhoto(dog);
+  const initials = dogInitials(dog.name);
+  const photoInner = photo
+    ? `<img src="${escapeHtml(photo)}" alt="" decoding="async"/>`
+    : `<div class="bday-hero-photo-fallback">${initials}</div>`;
+  const age = isBirthdayToday(dog.dob);
+  const breed = dog.breed || '';
+
+  let confetti = '';
+  const colors = ['#C9A96E', '#D7BA81', '#FFFFFF', '#5CD68A', '#D76B00'];
+  for(let i = 0; i < 24; i++){
+    const left = Math.floor(Math.random() * 100);
+    const delay = (Math.random() * 4).toFixed(2);
+    const duration = (5 + Math.random() * 4).toFixed(2);
+    const color = colors[i % colors.length];
+    const rotate = Math.floor(Math.random() * 360);
+    confetti += `<div class="confetti-piece" style="left:${left}%;background:${color};animation-duration:${duration}s;animation-delay:${delay}s;transform:rotate(${rotate}deg)"></div>`;
+  }
+
+  let counter = '';
+  let dots = '';
+  if(total > 1){
+    counter = `<div class="bday-hero-counter">${idx+1} / ${total}</div>`;
+    dots = `<div class="bday-hero-dots">${
+      allDogs.map((_,i) => `<span class="dot${i===idx?' on':''}"></span>`).join('')
+    }</div>`;
+  }
+
+  return `<div class="bday-hero">
+    ${confetti}
+    ${counter}
+    <div class="bday-hero-photo-frame">${photoInner}</div>
+    <div class="bday-hero-greeting">Happy Birthday</div>
+    <div class="bday-hero-name">${escapeHtml(dog.name||'—')}</div>
+    ${age !== null ? `<div class="bday-hero-age">Turning ${age}</div>` : ''}
+    ${breed ? `<div class="bday-hero-breed">${escapeHtml(breed)}</div>` : ''}
+    ${dots}
+  </div>`;
+}
+
+function startBdayAutoplay(dogs){
+  stopBdayAutoplay();
+  if(dogs.length <= 1) return;
+  bdayTimer = setTimeout(() => {
+    bdayCurIdx = (bdayCurIdx + 1) % dogs.length;
+    if(currentMode === 'birthday') renderBirthday();
+  }, BDAY_HERO_DURATION);
+}
+function stopBdayAutoplay(){
+  if(bdayTimer){clearTimeout(bdayTimer); bdayTimer = null}
+}
+
 $('prev').addEventListener('click', () => goTo(curIdx - 1));
 $('next').addEventListener('click', () => goTo(curIdx + 1));
 document.addEventListener('keydown', e => {
@@ -812,11 +1079,14 @@ window.addEventListener('resize', () => {
 function setMode(mode){
   const previousMode = currentMode;
   currentMode = mode;
-  localStorage.setItem('fido_staff_mode_v2', mode);
+  localStorage.setItem('fido_staff_mode_v3', mode);
+
   $('btn-display').classList.toggle('on', mode === 'display');
   $('btn-list').classList.toggle('on', mode === 'list');
+  $('btn-birthday').classList.toggle('on', mode === 'birthday');
   $('display').classList.toggle('on', mode === 'display');
   $('list').classList.toggle('on', mode === 'list');
+  $('birthday').classList.toggle('on', mode === 'birthday');
 
   if(previousMode && previousMode !== mode){
     if(previousMode === 'display'){
@@ -824,14 +1094,21 @@ function setMode(mode){
       pairs = [];
       curIdx = 0;
       stopAutoplay();
-    }else{
+    }else if(previousMode === 'list'){
       $('list-content').innerHTML = '';
+    }else if(previousMode === 'birthday'){
+      $('birthday-content').innerHTML = '';
+      bdayCurIdx = 0;
+      stopBdayAutoplay();
     }
   }
 
   if(mode === 'list'){
     if(lastRenderedMode !== 'list') renderList();
     lastRenderedMode = 'list';
+  }else if(mode === 'birthday'){
+    if(lastRenderedMode !== 'birthday') renderBirthday();
+    lastRenderedMode = 'birthday';
   }else{
     if(lastRenderedMode !== 'display') renderDisplay();
     lastRenderedMode = 'display';
@@ -840,13 +1117,13 @@ function setMode(mode){
 }
 $('btn-display').addEventListener('click', () => setMode('display'));
 $('btn-list').addEventListener('click', () => setMode('list'));
+$('btn-birthday').addEventListener('click', () => setMode('birthday'));
 
 setMode(currentMode);
 
 $('slideshow').innerHTML = `<div class="state"><div class="spinner"></div><div class="state-title">Loading guests…</div></div>`;
 $('list-content').innerHTML = `<div class="state" style="position:relative;padding:80px 24px"><div class="spinner"></div><div class="state-title">Loading guests…</div></div>`;
 
-// Listener
 const apptCol = collection(db,'locations',LOCATION_ID,'appointments');
 const q = query(apptCol, where('endDate','>=',Timestamp.fromDate(startOfToday())));
 
